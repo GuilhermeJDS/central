@@ -6,12 +6,12 @@ import type { ChaveConta } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Chaves do cliente para a API da conta e o MCP. A chave é `kor_ct_` + 32
+ * Chaves do cliente para a API da conta e o MCP. A chave é `cen_` + 32
  * bytes aleatórios; só o SHA-256 fica no banco e ela aparece uma vez, na
  * criação. Cada chave alcança só a conta que a criou.
  */
 
-export const PREFIXO_CHAVE_CONTA = "kor_ct_";
+export const PREFIXO_CHAVE_CONTA = "cen_";
 /** Quantas chaves ativas uma conta pode ter ao mesmo tempo. */
 export const MAX_CHAVES_ATIVAS = 10;
 const CACHE_TTL_MS = 30_000;
@@ -33,9 +33,9 @@ export function esquecerChaveConta(id: string) {
   for (const [h, e] of cache) if (e.chave.id === id) cache.delete(h);
 }
 
-/** Lê `Authorization: Bearer kor_ct_…` e devolve a chave ativa, ou null. */
+/** Lê `Authorization: Bearer cen_…` e devolve a chave ativa, ou null. */
 export async function chaveContaDoCabecalho(authorization: string | null): Promise<ChaveConta | null> {
-  const m = authorization?.match(/^Bearer\s+(kor_ct_[A-Za-z0-9_-]{20,100})\s*$/);
+  const m = authorization?.match(/^Bearer\s+(cen_[A-Za-z0-9_-]{20,100})\s*$/);
   if (!m) return null;
   const hash = hashChaveConta(m[1]!);
 

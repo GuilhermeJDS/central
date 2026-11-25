@@ -117,6 +117,17 @@ export function PainelApiConta({
     2,
   );
   const curl = `curl ${base}/api/conta/v1 \\\n  -H "Authorization: Bearer ${chaveNosExemplos}"`;
+  const instrucoes = [
+    "Você trabalha para a minha empresa junto com a Central (uma equipe de agentes de IA).",
+    `API: ${base}/api/conta/v1 com o cabeçalho "Authorization: Bearer ${chaveNosExemplos}". Comece com GET / para ver o que você pode fazer.`,
+    "",
+    "Toda semana, faça isto:",
+    "1. Abra os meus perfis (Instagram, TikTok, YouTube, LinkedIn, X) pelo navegador e leia o perfil (nome, @, seguidores, seguindo, publicações, bio, link, foto) e os últimos 20 posts (id, texto, link, data, formato, imagem, duração e as métricas que aparecem: visualizações, curtidas, comentários, compartilhamentos, salvamentos).",
+    '2. Mande cada rede com POST /redes: { "rede": "INSTAGRAM" | "TIKTOK" | "YOUTUBE" | "LINKEDIN" | "X", "perfil": {...}, "posts": [...] }.',
+    '3. No começo de cada mês, mande os números do mês anterior com POST /numeros: { "mes": "AAAA-MM", "receita": reais, "atendimentos", "cancelados", "faltas", "clientesAtivos", "clientesNovos", "clientesSumidos" }.',
+    "4. Se eu pedir para você publicar: GET /publicar traz as peças aprovadas com data; publique no horário e marque com POST /publicar/{id} { \"link\": \"link do post\" }.",
+    "Nunca invente número: mande só o que leu. Não mexa em nada que eu não pedi.",
+  ].join("\n");
 
   return (
     <div className="cx-api">
@@ -334,6 +345,15 @@ export function PainelApiConta({
             <code className="cx-api-codigo">{urlMcp}</code>
             <Copiar texto={urlMcp} rotulo="Copiar" />
           </div>
+        </div>
+
+        <div className="cx-api-bloco">
+          <p className="cx-campo-rotulo">Sem API das redes: o seu agente traz os dados</p>
+          <p className="cx-con-secao-apoio">
+            OpenClaw, Hermes, Claude Code, Codex, um bot do Grok ou do n8n: qualquer agente que navega consegue ler os seus perfis e mandar para a Central. Crie uma chave com os escopos Redes, Números e Publicar e cole isto no agente.
+          </p>
+          <pre className="cx-api-codigo cx-api-pre">{instrucoes}</pre>
+          <Copiar texto={instrucoes} rotulo="Copiar instruções" />
         </div>
 
         <div className="cx-api-bloco">

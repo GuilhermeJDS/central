@@ -10,11 +10,11 @@ export const LIMITE_CONTA_POR_MINUTO = 60;
 export const LIMITE_CONTA_PESADAS_POR_MINUTO = 6;
 const MINUTO = 60_000;
 
-/** Chave do `Authorization: Bearer kor_ct_…`; sem ela, 401. */
+/** Chave do `Authorization: Bearer cen_…`; sem ela, 401. */
 export async function autenticarConta(req: Request): Promise<ContextoConta> {
   const chave = await chaveContaDoCabecalho(req.headers.get("authorization"));
   if (!chave)
-    throw new ErroConta(401, "chave_invalida", "Mande a chave da conta em Authorization: Bearer kor_ct_… (Central › Conexões › API e MCP).");
+    throw new ErroConta(401, "chave_invalida", "Mande a chave da conta em Authorization: Bearer cen_… (Central › Conexões › API e MCP).");
   return { accountId: chave.accountId, chave };
 }
 

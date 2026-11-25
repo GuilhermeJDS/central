@@ -134,6 +134,26 @@ model SkillInstalada {
   @@map("skills_instaladas")
 }
 
+/// O que o agente da pessoa (OpenClaw, Hermes, Claude Code, um bot do Grok...)
+/// manda pela API sobre uma rede, sem API oficial: perfil, seguidores, posts e
+/// métricas públicas. Uma linha por rede; cada envio substitui o anterior.
+model DadoRede {
+  id           String   @id @default(cuid())
+  accountId    String   @map("account_id")
+  /// INSTAGRAM | TIKTOK | YOUTUBE | LINKEDIN | X | GOOGLE_EMPRESA
+  rede         String
+  /// { nome, usuario, seguidores, seguindo, publicacoes, descricao, link, foto }
+  perfil       Json
+  /// [{ id, texto, link, data, formato, imagem, video, duracaoSegundos, metricas: {...} }]
+  posts        Json     @default("[]")
+  /// Quem mandou (nome do agente, vem da chave da API).
+  agente       String?
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@unique([accountId, rede])
+  @@map("dados_rede")
+}
+
 model FichaNegocio {
   id            String          @id @default(cuid())
   accountId     String          @unique @map("account_id")

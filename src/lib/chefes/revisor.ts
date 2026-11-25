@@ -42,7 +42,7 @@ import {
 
 const NOME = "Revisor";
 /** Léxico de marcas de texto de IA em português (skills/bastidor/tirar-cara-de-ia/*.json). */
-const PASTA_IG_HUMAN = path.join(process.cwd(), "skills", "bastidor", "tirar-cara-de-ia");
+const PASTA_IG_HUMAN = path.join(/* turbopackIgnore: true */ process.cwd(), "skills", "bastidor", "tirar-cara-de-ia");
 const MAX_TOKENS_REVISOR = 8192;
 const TIMEOUT_REVISOR_MS = 120 * 1000;
 /** Quantos caracteres de contexto mostrar em volta de cada achado. */
@@ -336,7 +336,7 @@ export async function revisar(
 // Crash-out (anti-alucinação), com a evidência que a skill recebeu
 // ---------------------------------------------------------------------------
 
-const PASTA_CRASH_OUT = path.join(process.cwd(), "skills", "bastidor", "checar-fatos", "SKILL.md");
+const PASTA_CRASH_OUT = path.join(/* turbopackIgnore: true */ process.cwd(), "skills", "bastidor", "checar-fatos", "SKILL.md");
 let crashOutMd: string | null = null;
 
 const ADAPTACAO_CRASH_OUT = [

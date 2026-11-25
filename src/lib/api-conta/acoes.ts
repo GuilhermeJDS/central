@@ -19,6 +19,21 @@ import { centralLiberada, podeGerarChefes } from "@/lib/central/liberacao";
 import { prisma } from "@/lib/prisma";
 
 import { escoposDe, type EscopoConta } from "./escopos";
+import { envioAgenteSchema, gravarDoAgente } from "@/lib/redes/visao";
+
+const numero = z.coerce.number().int().nonnegative().optional();
+const numerosSchema = z.object({
+  mes: z.string().regex(/^\d{4}-\d{2}$/, "mes no formato AAAA-MM"),
+  /** Faturamento em reais (ex.: 18450.90). */
+  receita: z.coerce.number().nonnegative().optional(),
+  atendimentos: numero,
+  cancelados: numero,
+  faltas: numero,
+  clientesAtivos: numero,
+  clientesNovos: numero,
+  clientesSumidos: numero,
+  ateDia: z.coerce.number().int().min(1).max(31).optional(),
+});
 
 export class ErroConta extends Error {
   constructor(
@@ -221,6 +236,110 @@ export const ACOES_CONTA: AcaoConta[] = [
       const t = ticketSchema.safeParse(decodificarTicket(String(a.ticket)));
       if (!t.success) throw new ErroConta(400, "parametros_invalidos", "ticket: inválido.");
       return statusPedido(accountId, t.data);
+    },
+  },
+  // ------------------------------------------------------------------ agente: redes sem API oficial
+  {
+    nome: "enviar_rede",
+    descricao:
+      "Manda o que o seu agente leu de uma rede (sem API oficial): perfil, seguidores e os posts com as métricas públicas. Cada envio substitui o anterior daquela rede. A Central mostra tudo em Redes › Contas e os chefes usam nos trabalhos.",
+    escopo: "redes",
+    metodo: "POST",
+    caminho: "/redes",
+    entrada: envioAgenteSchema,
+    async executar({ accountId, chave }, a) {
+      const r = await gravarDoAgente(accountId, envioAgenteSchema.parse(a), chave.nome);
+      return { ok: true, ...r };
+    },
+  },
+  // ------------------------------------------------------------------ agente: números do mês
+  {
+    nome: "informar_numeros",
+    descricao:
+      "Informa os números de um mês (faturamento em reais, atendimentos ou vendas, cancelados, faltas, clientes ativos, novos e sumidos). O Gerente Rotina, o Conselho e o Negociador Trato leem daqui. Mandar de novo o mesmo mês atualiza.",
+    escopo: "numeros",
+    metodo: "POST",
+    caminho: "/numeros",
+    entrada: numerosSchema,
+    async executar({ accountId }, a) {
+      const d = numerosSchema.parse(a);
+      const dados = {
+        receitaCentavos: Math.round((d.receita ?? 0) * 100),
+        atendimentos: d.atendimentos ?? 0,
+        cancelados: d.cancelados ?? 0,
+        faltas: d.faltas ?? 0,
+        clientesAtivos: d.clientesAtivos ?? 0,
+        clientesNovos: d.clientesNovos ?? 0,
+        clientesSumidos: d.clientesSumidos ?? 0,
+        ateDia: d.ateDia ?? 31,
+      };
+      await prisma.numeroMes.upsert({ where: { accountId_mes: { accountId, mes: d.mes } }, update: dados, create: { accountId, mes: d.mes, ...dados } });
+      return { ok: true, mes: d.mes };
+    },
+  },
+  {
+    nome: "ler_numeros",
+    descricao: "Os números dos últimos 12 meses informados.",
+    escopo: "numeros",
+    metodo: "GET",
+    caminho: "/numeros",
+    entrada: z.object({}),
+    async executar({ accountId }) {
+      const l = await prisma.numeroMes.findMany({ where: { accountId }, orderBy: { mes: "desc" }, take: 12 });
+      return { meses: l.map((m) => ({ mes: m.mes, receita: m.receitaCentavos / 100, atendimentos: m.atendimentos, cancelados: m.cancelados, faltas: m.faltas, clientesAtivos: m.clientesAtivos, clientesNovos: m.clientesNovos, clientesSumidos: m.clientesSumidos, ateDia: m.ateDia })) };
+    },
+  },
+  // ------------------------------------------------------------------ agente: publicação
+  {
+    nome: "fila_de_publicacao",
+    descricao:
+      "Peças aprovadas com data no Cronograma que ainda não foram publicadas: rede, quando, o texto pronto e, no carrossel, os slides. Para o agente que publica sozinho (sem Buffer). Depois de publicar, use marcar_publicada.",
+    escopo: "publicar",
+    metodo: "GET",
+    caminho: "/publicar",
+    entrada: z.object({}),
+    async executar({ accountId }) {
+      const l = await prisma.entregaChefe.findMany({
+        where: { accountId, etapa: { in: ["APROVADO", "PROGRAMADO"] }, programadaPara: { not: null }, publicadaEm: null },
+        orderBy: { programadaPara: "asc" },
+        take: 50,
+        select: { id: true, rede: true, tipo: true, titulo: true, texto: true, conteudo: true, programadaPara: true, bufferId: true },
+      });
+      return {
+        pecas: l.map((e) => ({
+          id: e.id,
+          rede: e.rede,
+          tipo: e.tipo,
+          titulo: e.titulo,
+          quando: e.programadaPara?.toISOString() ?? null,
+          vencida: !!e.programadaPara && e.programadaPara.getTime() <= Date.now(),
+          naFilaDoBuffer: !!e.bufferId,
+          texto: e.texto ?? "",
+          slides: (e.conteudo as { slides?: unknown } | null)?.slides ?? null,
+        })),
+      };
+    },
+  },
+  {
+    nome: "marcar_publicada",
+    descricao: "Marca uma peça como publicada, com o link do post (a peça vai para Publicados e a métrica dela passa a ser lida).",
+    escopo: "publicar",
+    metodo: "POST",
+    caminho: "/publicar/{id}",
+    entrada: z.object({ id: z.string().min(1).max(64), link: z.string().url().max(1000).optional(), publicadaEm: z.string().datetime().optional() }),
+    async executar({ accountId }, a) {
+      const e = await prisma.entregaChefe.findFirst({ where: { id: String(a.id), accountId }, select: { id: true, rede: true, texto: true } });
+      if (!e) throw new ErroConta(404, "nao_encontrada", "Peça não encontrada nesta conta.");
+      const em = a.publicadaEm ? new Date(String(a.publicadaEm)) : new Date();
+      await prisma.entregaChefe.update({
+        where: { id: e.id, accountId },
+        data: {
+          etapa: "PUBLICADO",
+          publicadaEm: em,
+          ...(a.link ? { vinculo: { rede: e.rede ?? "", id: String(a.link), link: String(a.link), data: em.toISOString(), texto: (e.texto ?? "").slice(0, 300), capa: null } } : {}),
+        },
+      });
+      return { ok: true, id: e.id };
     },
   },
 ];

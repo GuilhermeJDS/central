@@ -15,5 +15,3 @@ servicos/*/.env
 .DS_Store
 public/uploads/
 .next-*
-vendor/
-src/garimpo/

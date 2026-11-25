@@ -4,7 +4,7 @@ import { acaoPorRota, ErroConta } from "@/lib/api-conta/acoes";
 import { autenticarConta, executarAcaoConta } from "@/lib/api-conta/executar";
 
 /**
- * API da conta (o cliente com a própria chave kor_ct_…). Cada ação de
+ * API da conta (o cliente com a própria chave cen_…). Cada ação de
  * lib/api-conta/acoes responde num método + caminho; o MCP em /api/conta/mcp
  * expõe as mesmas ações como ferramentas.
  */

@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
 
+import { NumerosMes, type NumerosMesView } from "@/components/central/numeros-mes";
+import { mesesAtualEAnterior } from "@/lib/chefes/gerente-rotina";
+import { prisma } from "@/lib/prisma";
 import { MarcaExemplo, SeletorPeriodo } from "@/components/central/cabeca";
 import { GraficoOperacao, LeituraChefe, ProntoParaVoce, QuadroConselho, RankingVizinhos } from "@/components/central/departamento";
 import { EsperandoSim, TopoChefe } from "@/components/central/departamento-chefe";
@@ -35,7 +38,7 @@ const SUBTITULO: Record<SlugDepartamento, string> = {
   redes: "O que postar, quando postar e o que está dando resultado.",
   vendas: "Quem compra, quem sumiu e o que mandar para cada um.",
   estrategia: "Preço, pacotes e para onde o negócio vai.",
-  operacao: "Agenda, faltas e o dia a dia da casa.",
+  operacao: "Os números do mês e o dia a dia da casa.",
 };
 
 /**
@@ -45,6 +48,22 @@ const SUBTITULO: Record<SlugDepartamento, string> = {
  * última leitura, curta. Texto longo sempre cortado com "Ver tudo".
  * Redes tem rota própria (/central/redes: o estúdio).
  */
+/** O mês atual já informado (ou vazio) para o formulário de Operação. */
+async function numerosIniciais(accountId: string): Promise<NumerosMesView> {
+  const { atual } = mesesAtualEAnterior();
+  const m = await prisma.numeroMes.findUnique({ where: { accountId_mes: { accountId, mes: atual } } });
+  return {
+    mes: atual,
+    receita: m ? (m.receitaCentavos / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) : "",
+    atendimentos: m?.atendimentos ?? 0,
+    cancelados: m?.cancelados ?? 0,
+    faltas: m?.faltas ?? 0,
+    clientesAtivos: m?.clientesAtivos ?? 0,
+    clientesNovos: m?.clientesNovos ?? 0,
+    clientesSumidos: m?.clientesSumidos ?? 0,
+  };
+}
+
 export default async function PaginaDepartamento({ params, searchParams }: Props) {
   const { departamento } = await params;
   const info = departamentoPorSlug(departamento);
@@ -108,6 +127,7 @@ export default async function PaginaDepartamento({ params, searchParams }: Props
         {/* Cardápio: cada skill do chefe vira um card com botão. */}
         {acoesDoChefe(info.chefe).length ? <CardapioChefe chefe={info.chefe} ativo={podeGerar} /> : null}
         {numerosDep}
+        {slug === "operacao" && c.accountId ? <NumerosMes inicial={await numerosIniciais(c.accountId)} /> : null}
         {/* Peças prontas: nascem do "Aprovar" (Presença e Operação só leem números). */}
         {info.leitura ? (
           entregas.dado.length ? <ProntoParaVoce entregas={entregas.dado} /> : null

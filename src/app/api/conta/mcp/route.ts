@@ -6,7 +6,7 @@ import { autenticarConta, executarAcaoConta } from "@/lib/api-conta/executar";
 /**
  * Servidor MCP da conta (transporte HTTP, sem sessão): JSON-RPC 2.0 no POST.
  * As ferramentas são as ações da API da conta que a chave alcança.
- * Autenticação: Authorization: Bearer kor_ct_… (Central › Conexões › API e MCP).
+ * Autenticação: Authorization: Bearer cen_… (Central › Conexões › API e MCP).
  */
 export const dynamic = "force-dynamic";
 

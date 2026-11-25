@@ -26,6 +26,7 @@ export const GRUPOS_ESTUDIO: readonly GrupoEstudio[] = [
   {
     rotulo: "Desempenho",
     secoes: [
+      { href: `${BASE_ESTUDIO}/conta`, rotulo: "Contas", nome: "As suas contas nas redes" },
       { href: `${BASE_ESTUDIO}/insights`, rotulo: "Insights" },
       { href: `${BASE_ESTUDIO}/publicados`, rotulo: "Publicados" },
     ],

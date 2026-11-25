@@ -18,7 +18,7 @@ export function segredoSistema(): Buffer {
   const env = process.env.APP_SECRET?.trim();
   if (env && env.length >= 16) return (cache = createHash("sha256").update(env).digest());
   if (process.env.VERCEL) throw new Error("Defina a variável APP_SECRET (32+ caracteres aleatórios) no projeto da Vercel.");
-  const arquivo = path.join(process.cwd(), "dados", ".segredo");
+  const arquivo = path.join(/* turbopackIgnore: true */ process.cwd(), "dados", ".segredo");
   if (!existsSync(arquivo)) {
     mkdirSync(path.dirname(arquivo), { recursive: true });
     writeFileSync(arquivo, randomBytes(32).toString("base64url"), { mode: 0o600 });

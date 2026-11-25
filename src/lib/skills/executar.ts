@@ -22,7 +22,7 @@ import type { EntradaExecutar, FuncaoExecutar, ResultadoExecutar } from "@/lib/c
 import { prisma } from "@/lib/prisma";
 import { rodarSkillNoModelo } from "@/lib/skills/rodar-no-modelo";
 
-export const RAIZ_SKILLS = path.join(process.cwd(), "skills");
+export const RAIZ_SKILLS = path.join(/* turbopackIgnore: true */ process.cwd(), "skills");
 const MAX_APOIO = 60_000;
 
 export type SkillAchada = { slug: string; area: string; pasta: string | null; skillMd: string; origem: "repositorio" | "instalada" };

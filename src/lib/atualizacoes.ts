@@ -41,7 +41,7 @@ const execFileAsync = promisify(execFile);
 
 export function versaoLocal(): string {
   try {
-    return JSON.parse(readFileSync(path.join(process.cwd(), "package.json"), "utf8")).version ?? "0.0.0";
+    return JSON.parse(readFileSync(path.join(/* turbopackIgnore: true */ process.cwd(), "package.json"), "utf8")).version ?? "0.0.0";
   } catch {
     return "0.0.0";
   }
@@ -182,11 +182,11 @@ export type ModoAtualizar = { modo: "git"; podeAuto: true } | { modo: "vercel" |
 export function comoAtualizar(): ModoAtualizar {
   if (process.env.VERCEL) return { modo: "vercel", podeAuto: false };
   if (existsSync("/.dockerenv")) return { modo: "docker", podeAuto: false };
-  if (!existsSync(path.join(process.cwd(), ".git"))) return { modo: "zip", podeAuto: false };
+  if (!existsSync(path.join(/* turbopackIgnore: true */ process.cwd(), ".git"))) return { modo: "zip", podeAuto: false };
   return { modo: "git", podeAuto: true };
 }
 
-const LOG = () => path.join(process.cwd(), "dados", "atualizacao.log");
+const LOG = () => path.join(/* turbopackIgnore: true */ process.cwd(), "dados", "atualizacao.log");
 
 /**
  * git pull + npm install + banco, num processo separado (o log vai para

@@ -1,6 +1,6 @@
 {
   "name": "central",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "A sua empresa tocada por uma equipe de agentes de IA: redes sociais, vendas, estratégia e operação. Aberto, grátis, roda no seu PC, VPS ou Vercel.",
   "license": "MIT",
@@ -17,8 +17,7 @@
     "tudo": "node scripts/tudo.mjs",
     "senha": "node scripts/senha.mjs",
     "typecheck": "tsc --noEmit",
-    "postinstall": "node scripts/db.mjs --gerar || true",
-    "test": "tsx --test tests/central/*.test.ts"
+    "postinstall": "node scripts/db.mjs --gerar || true"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.1",
