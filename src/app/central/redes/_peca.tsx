@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { CabecaPagina } from "@/components/central/cabeca";
 import { ChipChefe } from "@/components/central/chefe";
 import { EstudioTexto } from "@/components/central/estudio/estudio-texto";
+import { MandarBuffer } from "@/components/central/estudio/mandar-buffer";
+import { MARCA_PADRAO } from "@/lib/central/marca";
 import { ROTULO_TIPO, type TipoEntrega } from "@/lib/central/entregas-tipos";
 import { comRede, redeDoFiltro } from "@/lib/central/estudio/secoes";
 import { obterPecaDetalhe } from "@/lib/central/estudio/pecas";
@@ -42,7 +44,12 @@ export async function PaginaPecaTexto({
         chip={<ChipChefe nome="Editora Pauta" />}
       />
       {peca.producao === "PRONTA" ? (
-        <EstudioTexto peca={peca} />
+        <>
+          <EstudioTexto peca={peca} />
+          <div className="cx-painel">
+            <MandarBuffer entregaId={peca.id} slides={[]} marca={MARCA_PADRAO} nomeNegocio={c.nomeNegocio} aprovada={peca.etapa !== "EM_REVISAO"} buffer={peca.buffer} />
+          </div>
+        </>
       ) : (
         <p className="cx-dica">{peca.producao === "ERRO" ? peca.erro ?? "Não saiu. Tente de novo." : "A Editora Pauta ainda está produzindo esta peça."}</p>
       )}

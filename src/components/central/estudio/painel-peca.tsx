@@ -14,6 +14,7 @@ import { PostVinculado } from "@/components/central/estudio/post-vinculado";
 import { ListaVersoes } from "@/components/central/estudio/versoes";
 import type { ApiVisualizador } from "@/components/central/estudio/visualizador";
 import { exportarPdf, exportarPng } from "@/lib/central/estudio/desenho";
+import { MandarBuffer } from "@/components/central/estudio/mandar-buffer";
 import type { PecaDetalhe } from "@/lib/central/estudio/pecas";
 import { ETAPAS, ROTULO_ETAPA, type Etapa } from "@/lib/central/estudio/tipos";
 
@@ -272,6 +273,14 @@ export function PainelPeca({ api }: { api: ApiVisualizador }) {
       <DetalhesPeca peca={peca} />
       <LegendaPeca peca={peca} />
       <Exportar api={api} />
+      <MandarBuffer
+        entregaId={api.peca.id}
+        slides={api.estado.slides}
+        marca={api.estado.marca}
+        nomeNegocio={api.nomeNegocio}
+        aprovada={api.peca.etapa !== "EM_REVISAO"}
+        buffer={api.peca.buffer}
+      />
       <PostVinculado peca={peca} />
       <ListaVersoes api={api} onComparar={api.comparar} />
     </div>

@@ -41,22 +41,13 @@ const MAX_TOKENS_PRODUCAO = 6000;
 // ---------------------------------------------------------------------------
 
 const TIPO_DA_SKILL: Record<string, TipoEntrega> = {
-  "ig-carousel": "CARROSSEL",
-  "li-carousel": "CARROSSEL",
-  "ig-reel": "ROTEIRO",
-  "ig-story": "ROTEIRO",
-  "yt-script": "ROTEIRO",
-  "yt-shorts": "ROTEIRO",
-  virality: "ROTEIRO",
-  "x-thread": "THREAD",
-  "ig-caption": "POST",
-  "li-post": "POST",
-  "x-post": "POST",
-  "ig-repurpose": "POST",
-  "li-repurpose": "POST",
-  "x-repurpose": "POST",
-  "yt-package": "TITULO",
-  "yt-seo": "TITULO",
+  carrossel: "CARROSSEL",
+  "roteiro-curto": "ROTEIRO",
+  "roteiro-youtube": "ROTEIRO",
+  stories: "ROTEIRO",
+  legenda: "POST",
+  reaproveitar: "POST",
+  "titulo-e-capa": "TITULO",
 };
 
 const REDE_DO_REPOSITORIO: Record<string, string> = {
@@ -64,6 +55,7 @@ const REDE_DO_REPOSITORIO: Record<string, string> = {
   youtube: "YOUTUBE",
   linkedin: "LINKEDIN",
   x: "X",
+  tiktok: "TIKTOK",
 };
 
 const formatoSchema = z.enum(["CARROSSEL", "ROTEIRO", "POST", "THREAD", "TITULO", "THUMBNAIL", "TEXTO"]);

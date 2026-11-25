@@ -17,6 +17,7 @@ import { gerarImagem, listarImagens, NOME_PROVEDOR_IMAGEM, type ImagemView } fro
 import { numerosDoPost, postsDaConta, type NumerosPost, type PostConta } from "@/lib/central/estudio/posts";
 import { ETAPAS, type VinculoPost } from "@/lib/central/estudio/tipos";
 import { prisma } from "@/lib/prisma";
+import { publicarNoBuffer, publicarSeDer } from "@/lib/central/publicar";
 import { saveUploadedImage } from "@/lib/uploads";
 
 type Resultado<T = object> = ({ erro: null } & T) | { erro: string };
@@ -292,8 +293,20 @@ export async function programarAcao(entregaId: string, dia: string | null): Prom
       ...(e.etapa === "PROGRAMADO" && !data ? { etapa: "APROVADO" } : {}),
     },
   });
+  // Buffer ligado: peça de texto com data vai sozinha para a fila.
+  if (data && e.etapa !== "PUBLICADO") await publicarSeDer(c.accountId, e.id);
   revalidar();
   return { erro: null };
+}
+
+/** "Mandar pro Buffer" do estúdio. `imagens`: URLs de /api/uploads dos slides já desenhados. */
+export async function mandarProBufferAcao(entregaId: string, imagens: string[]): Promise<{ ok: boolean; mensagem: string }> {
+  const c = await conta();
+  if ("erro" in c) return { ok: false, mensagem: c.erro ?? "Sem acesso." };
+  const urls = imagens.filter((u) => /^\/api\/uploads\/[\w/.-]+$/.test(u)).slice(0, 10);
+  const r = await publicarNoBuffer(c.accountId, String(entregaId).slice(0, 64), urls);
+  revalidar();
+  return r;
 }
 
 // ---------------------------------------------------------------------------

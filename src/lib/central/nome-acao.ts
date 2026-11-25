@@ -8,105 +8,70 @@
  * Módulo puro (vai para o cliente e para o teste que barra id na tela).
  */
 
-/** `repositorio/skill` → nome da ação. */
-export const NOME_DA_ACAO: Record<string, string> = {
-  // Negociador Trato (vendas e clientes)
-  "closer/win-back": "Mensagem para cliente sumido",
-  "closer/follow-up": "Mensagens para quem não respondeu",
-  "closer/pipeline": "Organizar o funil de vendas",
-  "closer/forecaster": "Previsão de faturamento do mês",
-  "closer/record-keeper": "Registro das conversas",
-  "closer/scheduler": "Resposta para marcar horário",
-  "closer/prospector": "Onde achar clientes novos",
-  "closer/researcher": "Pesquisa antes da conversa",
-  "closer/sales-coach": "Treino de venda da equipe",
-  "closer/proposal-writer": "Proposta para o cliente",
-  "closer/contract-writer": "Contrato de serviço",
-  "whale/objection-handler": "Respostas para objeções",
-  "whale/whale-hunter": "Plano para fechar cliente grande",
-  "whale/follow-up": "Acompanhar proposta grande",
-  "whale/market-researcher": "Problema que já custa caro",
-  "whale/offer-builder": "Página da oferta",
-  "whale/pricing": "Preço pelo que já gastam",
-  "whale/pre-sale": "Pré-venda",
-  "whale/requirements": "O que os clientes pedem",
-  "whale/launch-planner": "Datas do lançamento",
-  "whale/demo-builder": "Demonstração do serviço",
-  "whale/case-study": "Caso de sucesso",
-  // Conselho (ideia, oferta e números)
-  "founder/founder-board": "Conselho de sócios",
-  "founder/founder-competitors": "Mapa dos concorrentes",
-  "founder/founder-consumer": "Painel de clientes",
-  "founder/founder-offer": "Oferta irrecusável",
-  "founder/founder-pricing": "Preço certo",
-  "founder/founder-cfo": "Conta do lucro",
-  "founder/founder-ops": "Como a casa roda",
-  "founder/founder-marketing": "Plano de marketing",
-  "founder/founder-brand": "Marca do negócio",
-  "founder/founder-launch": "Plano de lançamento",
-  "founder/founder-plan": "Plano de negócio",
-  "illegal/larp": "Teste sem dó da ideia",
-  "illegal/crash-out": "Checagem dos fatos",
-  "illegal/aura-farming": "Acabamento visual",
-  "illegal/67": "Seis caminhos e o melhor deles",
-  "illegal/china-maxing": "Pedido enxuto",
+/** Nome de cada skill da pasta skills/ (a mesma skill de redes serve todas as redes). */
+const NOME_DA_SKILL: Record<string, string> = {
   // Editora Pauta (redes)
-  "instagram/ig-viral": "O que viralizou no nicho",
-  "instagram/ig-reel": "Roteiro de Reels",
-  "instagram/ig-carousel": "Carrossel",
-  "instagram/ig-plan": "Plano da semana",
-  "instagram/ig-profile": "Ajuste do perfil",
-  "instagram/ig-caption": "Legenda",
-  "instagram/ig-story": "Stories do dia",
-  "instagram/ig-reply": "Respostas aos comentários",
-  "instagram/ig-comment": "Comentários em outros perfis",
-  "instagram/ig-dm": "Mensagens no Direct",
-  "instagram/ig-repurpose": "Reaproveitar conteúdo",
-  "instagram/ig-audit": "Análise do perfil",
-  "instagram/ig-human": "Tirar cara de IA",
-  "youtube/yt-plan": "Ideias de vídeo",
-  "youtube/yt-package": "Ideias de título e thumbnail",
-  "youtube/yt-script": "Roteiro do vídeo",
-  "youtube/yt-shorts": "Shorts",
-  "youtube/yt-audit": "Análise do canal",
-  "youtube/yt-seo": "Descrição e tags",
-  "youtube/yt-chapters": "Capítulos do vídeo",
-  "youtube/yt-comment": "Respostas aos comentários",
-  "youtube/yt-retention": "Onde as pessoas saem do vídeo",
-  "youtube/yt-edit": "Lista de cortes",
-  "youtube/yt-viral": "O que viralizou no nicho",
-  "x/x-thread": "Sequência de posts",
-  "x/x-post": "Posts",
-  "x/x-viral": "O que viralizou no nicho",
-  "x/x-profile": "Ajuste do perfil",
-  "x/x-plan": "Plano da semana",
-  "x/x-reply": "Respostas às respostas",
-  "x/x-comment": "Comentários em outros perfis",
-  "x/x-dm": "Mensagens diretas",
-  "x/x-repurpose": "Reaproveitar conteúdo",
-  "x/x-audit": "Análise do perfil",
-  "x/x-human": "Tirar cara de IA",
-  "linkedin/li-post": "Posts",
-  "linkedin/li-carousel": "Carrossel em PDF",
-  "linkedin/li-profile": "Ajuste do perfil",
-  "linkedin/li-plan": "Plano da semana",
-  "linkedin/li-reply": "Respostas aos comentários",
-  "linkedin/li-comment": "Comentários em outros perfis",
-  "linkedin/li-dm": "Convite e mensagem",
-  "linkedin/li-inbox": "Caixa de entrada organizada",
-  "linkedin/li-repurpose": "Reaproveitar conteúdo",
-  "linkedin/li-audit": "Análise do perfil",
-  "linkedin/li-human": "Tirar cara de IA",
-  "tiktok/tt-ideias": "Ideias de vídeo",
-  "tiktok/tt-ganchos": "Primeiras frases do vídeo",
-  "tiktok/tt-roteiro": "Roteiro do vídeo",
-  "tiktok/tt-fotos": "Carrossel de fotos",
-  "tiktok/tt-legenda": "Legenda e hashtags",
-  "master/virality": "O que viralizou em todas as redes",
-  "master/edit": "Edição de vídeo curto",
-  "master/build": "Montar site ou app",
-  "promptmaster/promptmaster": "Pedido afinado",
+  "plano-do-mes": "Plano do mês",
+  legenda: "Legenda e texto do post",
+  carrossel: "Carrossel",
+  "roteiro-curto": "Roteiro de vídeo curto",
+  "roteiro-youtube": "Roteiro do vídeo",
+  "titulo-e-capa": "Título e capa",
+  stories: "Stories do dia",
+  responder: "Respostas e mensagens",
+  reaproveitar: "Reaproveitar conteúdo",
+  "auditoria-do-perfil": "Análise do perfil",
+  "o-que-viraliza": "O que viralizou no nicho",
+  "tirar-cara-de-ia": "Tirar cara de IA",
+  // Negociador Trato
+  proposta: "Proposta para o cliente",
+  contrato: "Contrato de serviço",
+  funil: "Funil de vendas",
+  agenda: "Resposta para marcar horário",
+  "01-prospeccao-fria": "Prospecção de clientes novos",
+  "02-pesquisa-de-lead": "Pesquisa antes da conversa",
+  "03-negociacao-whatsapp": "Conversa no WhatsApp",
+  "04-quebra-de-objecoes": "Respostas para objeções",
+  "05-follow-up-e-reconquista": "Follow-up e cliente sumido",
+  "06-lista-negra-e-governanca": "Regras das mensagens",
+  "07-psicologia-por-perfil": "Venda por perfil de cliente",
+  "08-arquitetura-operacao-24-7": "Vendas rodando 24 horas",
+  chicote: "Página de vendas",
+  // Conselho
+  "avaliar-ideia": "Conselho sobre a ideia",
+  concorrentes: "Mapa dos concorrentes",
+  "teste-com-clientes": "Teste com clientes",
+  oferta: "Oferta irrecusável",
+  preco: "Preço certo",
+  lancamento: "Plano de lançamento",
+  marca: "Marca do negócio",
+  marketing: "Plano de marketing",
+  "numeros-e-caixa": "Conta do lucro",
+  "operacao-do-dia": "Como a casa roda",
+  "plano-do-negocio": "Plano de negócio",
+  // Bastidor
+  "afinar-pedido": "Pedido afinado",
+  "checar-fatos": "Checagem dos fatos",
 };
+
+const AREA_DA_SKILL: Record<string, string> = {
+  proposta: "vendas", contrato: "vendas", funil: "vendas", agenda: "vendas", chicote: "chicote",
+  "avaliar-ideia": "estrategia", concorrentes: "estrategia", "teste-com-clientes": "estrategia", oferta: "estrategia",
+  preco: "estrategia", lancamento: "estrategia", marca: "estrategia", marketing: "estrategia",
+  "numeros-e-caixa": "operacao", "operacao-do-dia": "operacao", "plano-do-negocio": "operacao",
+  "afinar-pedido": "bastidor", "checar-fatos": "bastidor",
+};
+
+const REDES_PAUTA = ["instagram", "youtube", "tiktok", "linkedin", "x"];
+const SKILLS_DE_REDE = ["plano-do-mes", "legenda", "carrossel", "roteiro-curto", "roteiro-youtube", "titulo-e-capa", "stories", "responder", "reaproveitar", "auditoria-do-perfil", "o-que-viraliza", "tirar-cara-de-ia"];
+
+/** `repositorio/skill` → nome da ação. */
+export const NOME_DA_ACAO: Record<string, string> = {};
+for (const [skill, nome] of Object.entries(NOME_DA_SKILL)) {
+  if (SKILLS_DE_REDE.includes(skill)) for (const r of REDES_PAUTA) NOME_DA_ACAO[`${r}/${skill}`] = nome;
+  else if (/^0\d-/.test(skill)) NOME_DA_ACAO[`prospeccao/${skill}`] = nome;
+  else NOME_DA_ACAO[`${AREA_DA_SKILL[skill] ?? "bastidor"}/${skill}`] = nome;
+}
 
 /** Trabalhos internos da Central gravados no campo skill (sem repositório). */
 export const NOME_INTERNO: Record<string, string> = {
@@ -149,7 +114,7 @@ export function idsProibidosNaTela(): string[] {
     ids.add(skill);
   }
   for (const k of Object.keys(NOME_INTERNO)) ids.add(k);
-  for (const r of ["closer", "whale", "founder", "illegal", "illegal-codes", "master", "promptmaster"]) ids.add(r);
+  for (const r of ["vendas", "prospeccao", "chicote", "estrategia", "operacao", "bastidor"]) ids.add(r);
   return [...ids];
 }
 
@@ -161,7 +126,7 @@ export function skillsDoNome(nome: string): string[] {
 }
 
 /** Ids que também são palavras comuns: no texto livre só troca quando vêm como "repo/skill" ou "/skill". */
-const PALAVRA_COMUM = new Set(["edit", "build", "pricing", "pipeline", "requirements", "scheduler", "researcher", "prospector", "forecaster", "67", "virality", "follow-up"]);
+const PALAVRA_COMUM = new Set(["legenda", "carrossel", "stories", "responder", "reaproveitar", "proposta", "contrato", "funil", "agenda", "chicote", "concorrentes", "oferta", "preco", "lancamento", "marca", "marketing", "vendas", "estrategia", "operacao", "bastidor"]);
 
 /**
  * Troca o id de skill que tenha sobrado num texto (erro antigo, título

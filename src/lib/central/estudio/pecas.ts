@@ -243,6 +243,8 @@ export type PecaDetalhe = {
   programadaPara: string | null;
   publicadaEm: string | null;
   vinculo: VinculoPost | null;
+  /** Buffer: quando foi para a fila e o último erro. */
+  buffer: { enviadaEm: string | null; erro: string | null };
   versoes: VersaoView[];
   comentarios: ComentarioPeca[];
 };
@@ -278,6 +280,7 @@ export async function obterPecaDetalhe(accountId: string, entregaId: string): Pr
     programadaPara: e.programadaPara?.toISOString() ?? null,
     publicadaEm: e.publicadaEm?.toISOString() ?? null,
     vinculo: vinculoDe(e.vinculo),
+    buffer: { enviadaEm: e.bufferEnviadaEm?.toISOString() ?? null, erro: e.bufferErro },
     versoes: versoes.map((v) => {
       const slides = slidesDe(v.conteudo) as SlideEstudio[];
       return {

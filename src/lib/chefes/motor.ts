@@ -18,9 +18,9 @@ import { dadosParaSkill, SKILLS_VIRAIS, temaDeBusca } from "@/lib/chefes/dados-r
 import { insumosPara } from "@/lib/central/ligacoes";
 import { AREAS_REDES } from "@/lib/central/redes-areas";
 import { CARDAPIO, chipsDoChefe } from "@/lib/chefes/cardapio";
-import { executarSkillPromptmaster } from "@/lib/skills/promptmaster/executar";
 import { rotear } from "@/lib/chefes/norte";
 import { revisar } from "@/lib/chefes/revisor";
+import { acharSkill, executorDeSkills, extrairDescricao } from "@/lib/skills/executar";
 import { garantirTitulo, PEDIDO_TITULO_LINHA, separarTitulo } from "@/lib/chefes/titulo";
 import { credencialDaConta, type Credencial, type OrigemChave } from "@/lib/ia/credencial";
 import type { ProvedorIA } from "@/lib/ia/provedores/catalogo";
@@ -58,7 +58,7 @@ export type ResultadoExecutar = {
 export type FuncaoExecutar = (skill: string, entrada: EntradaExecutar) => Promise<ResultadoExecutar>;
 
 export type RepositorioChefe = {
-  /** Pasta em vendor/skills/ onde ficam as skills (ex.: "instagram-agent-skill/skills"). */
+  /** Área em skills/ (ex.: "redes"). Só informativo: o executor acha a skill pelo nome. */
   pastaSkills: string;
   /** Skills que este chefe pode rodar neste repositório. */
   skills: readonly string[];
@@ -113,32 +113,13 @@ export const CABECALHO_SKILL =
 
 const cacheDescricoes = new Map<string, string>();
 
-/** Lê `description` do frontmatter YAML (suporta valor simples e blocos `>`/`|`). */
-function extrairDescricao(md: string): string {
-  const fm = md.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!fm) return "";
-  const linhas = fm[1].split(/\r?\n/);
-  const i = linhas.findIndex((l) => /^description:/.test(l));
-  if (i === -1) return "";
-  const resto = linhas[i].replace(/^description:\s*/, "").trim();
-  if (resto && !/^[>|][+-]?$/.test(resto)) {
-    return resto.replace(/^["']|["']$/g, "").trim();
-  }
-  const corpo: string[] = [];
-  for (const l of linhas.slice(i + 1)) {
-    if (l.trim() && !/^\s/.test(l)) break;
-    corpo.push(l.trim());
-  }
-  return corpo.join(" ").replace(/\s+/g, " ").trim();
-}
-
-export async function descricaoSkill(pastaSkills: string, skill: string): Promise<string> {
-  const chave = `${pastaSkills}/${skill}`;
-  const emCache = cacheDescricoes.get(chave);
+/** Descrição da skill (frontmatter do SKILL.md em skills/ ou da instalada). */
+export async function descricaoSkill(_pastaSkills: string, skill: string): Promise<string> {
+  const emCache = cacheDescricoes.get(skill);
   if (emCache !== undefined) return emCache;
-  const arquivo = path.join(process.cwd(), "vendor", "skills", pastaSkills, skill, "SKILL.md");
-  const descricao = extrairDescricao(await fs.readFile(arquivo, "utf-8"));
-  cacheDescricoes.set(chave, descricao);
+  const achada = await acharSkill(skill);
+  const descricao = achada ? extrairDescricao(achada.skillMd) : "";
+  cacheDescricoes.set(skill, descricao);
   return descricao;
 }
 
@@ -303,7 +284,7 @@ function pedidoVago(config: ConfigChefe, pedido: string): boolean {
 }
 
 /**
- * O Norte passa o pedido pelo Promptmaster (vendor/skills/promptmaster-skill):
+ * O Norte passa o pedido pela skill afinar-pedido (skills/bastidor):
  * reescreve o pedido cru num pedido claro para o chefe, sem inventar o que o
  * dono não disse. Fica registrado como execução do Norte; se falhar, segue o
  * pedido original.
@@ -320,13 +301,13 @@ async function afinarPedido(
     departamento: "DIRETORIA",
     chefe: "Norte",
     tipo: "CHEFE",
-    repositorio: "promptmaster",
-    skill: "promptmaster",
+    repositorio: "bastidor",
+    skill: "afinar-pedido",
     entrada: { acao: "afinarPedido", para: config.nome, pedido },
   });
   try {
     await marcarRodando(accountId, exec.id);
-    const r = await executarSkillPromptmaster("promptmaster", {
+    const r = await executorDeSkills()("afinar-pedido", {
       texto: [
         `${CABECALHO_SKILL} Não responda o pedido: só reescreva.`,
         `Reescreva o pedido do dono abaixo num pedido claro e completo para o chefe ${config.nome} (${config.departamento}), em português, em até 5 linhas: o que entregar, para quem, em que formato. Use a ficha; não invente fatos que o dono não disse. Responda só com o pedido reescrito.`,
@@ -353,7 +334,7 @@ async function afinarPedido(
     if (!afinado) return null;
     return {
       afinado,
-      elo: { chefe: "Norte", repositorio: "promptmaster", skill: "promptmaster", rotulo: "Pedido afinado", execucaoId: exec.id },
+      elo: { chefe: "Norte", repositorio: "bastidor", skill: "afinar-pedido", rotulo: "Pedido afinado", execucaoId: exec.id },
     };
   } catch (e) {
     await falharExecucao(accountId, exec.id, mensagemDeErro(e));

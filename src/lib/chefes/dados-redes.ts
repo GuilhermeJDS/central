@@ -22,7 +22,7 @@ import * as x from "@/lib/redes/x";
 import * as youtube from "@/lib/redes/youtube";
 
 /** Skills que só fazem sentido com dados de busca da rede (virais). */
-export const SKILLS_VIRAIS = new Set(["ig-viral", "yt-viral", "x-viral", "virality"]);
+export const SKILLS_VIRAIS = new Set(["o-que-viraliza"]);
 
 export const REDE_DO_REPOSITORIO: Partial<Record<string, RedeConectavel>> = {
   instagram: "INSTAGRAM",

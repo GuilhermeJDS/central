@@ -80,7 +80,8 @@ async function buscar<T>(url: string): Promise<T> {
     signal: AbortSignal.timeout(8000),
     cache: "no-store",
   });
-  if (!r.ok) throw new Error(`${url} respondeu ${r.status}`);
+  if (r.status === 404) throw new Error("o catálogo ainda não está publicado no GitHub");
+  if (!r.ok) throw new Error(`o GitHub respondeu ${r.status}`);
   return (await r.json()) as T;
 }
 

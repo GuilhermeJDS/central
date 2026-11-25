@@ -1,0 +1,30 @@
+import { CabecaPagina } from "@/components/central/cabeca";
+import { Mascote } from "@/components/central/mascote";
+import { ListaPedagio, type ItemPedagio } from "@/components/central/projeto-aberto/pedagio";
+
+export const metadata = { title: "Pedágio" };
+
+const ITENS: ItemPedagio[] = [
+  { id: "x", titulo: "Seguir o @mongarde_ no X", texto: "É onde saem as próximas ferramentas e as skills novas.", acao: "Seguir", link: "https://x.com/mongarde_" },
+  { id: "mvd", titulo: "Pôr o seu projeto no ranking", texto: "Cadastre o que você está construindo no mamaevireidev.com.br.", acao: "Cadastrar", link: "https://mamaevireidev.com.br" },
+  {
+    id: "clara",
+    titulo: "Dar uma força ao Clara Finance",
+    texto: "Projeto de um amigo. Uma estrela no GitHub já ajuda muito.",
+    acao: "Ajudar",
+    link: "https://github.com/cesaroeduardo/clara-finance?utm_source=mamaevireidev&utm_medium=ranking&utm_campaign=clara-finance&mvd_cid=zVTQdltE9CLQS7Yf",
+  },
+  { id: "grupo", titulo: "Entrar na comunidade do X", texto: "O grupo no WhatsApp de quem constrói em público.", acao: "Entrar", link: "https://chat.whatsapp.com/GBKvnYBUEaaBqsJtzibh4r?s=cl&p=i&iam=2" },
+];
+
+export default function Pedagio() {
+  return (
+    <>
+      <CabecaPagina secao="Projeto aberto" titulo="Pedágio" subtitulo="A Central é aberta e grátis para sempre. O pedágio não custa nada e ajuda quem faz e quem está começando." />
+      <section className="cx-painel cx-pedagio" data-chefe="norte">
+        <Mascote id="norte" tamanho={120} estado="waiting" />
+        <ListaPedagio itens={ITENS} />
+      </section>
+    </>
+  );
+}

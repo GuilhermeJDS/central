@@ -41,14 +41,8 @@ import {
 } from "@/lib/skills/execucoes";
 
 const NOME = "Revisor";
-const PASTA_IG_HUMAN = path.join(
-  process.cwd(),
-  "vendor",
-  "skills",
-  "instagram-agent-skill",
-  "skills",
-  "ig-human",
-);
+/** Léxico de marcas de texto de IA em português (skills/bastidor/tirar-cara-de-ia/*.json). */
+const PASTA_IG_HUMAN = path.join(process.cwd(), "skills", "bastidor", "tirar-cara-de-ia");
 const MAX_TOKENS_REVISOR = 8192;
 const TIMEOUT_REVISOR_MS = 120 * 1000;
 /** Quantos caracteres de contexto mostrar em volta de cada achado. */
@@ -64,7 +58,7 @@ export type Achado = {
 type Regra = { tipo: Achado["tipo"]; termo: string; motivo: string; regex: RegExp };
 
 // ---------------------------------------------------------------------------
-// Marcas de texto de IA (lidas dos .json do ig-human, com cache)
+// Marcas de texto de IA (lidas dos .json do tirar-cara-de-ia, com cache)
 // ---------------------------------------------------------------------------
 
 let cacheMarcasIa: Regra[] | null = null;
@@ -342,7 +336,7 @@ export async function revisar(
 // Crash-out (anti-alucinação), com a evidência que a skill recebeu
 // ---------------------------------------------------------------------------
 
-const PASTA_CRASH_OUT = path.join(process.cwd(), "vendor", "skills", "claude-illegal-codes", "crash-out", "SKILL.md");
+const PASTA_CRASH_OUT = path.join(process.cwd(), "skills", "bastidor", "checar-fatos", "SKILL.md");
 let crashOutMd: string | null = null;
 
 const ADAPTACAO_CRASH_OUT = [
