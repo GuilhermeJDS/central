@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ alvo
 
   const dono = await donoDaSessao();
   if ("erro" in dono) {
-    if (dono.erro === "login") return NextResponse.redirect(`${baseApp()}/login?redirect=${encodeURIComponent("/central/conexoes")}`, 303);
+    if (dono.erro === "login") return NextResponse.redirect(`${baseApp()}/entrar`, 303);
     return voltar({ ok: false, mensagem: dono.erro === "papel" ? "Só o dono da conta conecta as contas." : "Nenhuma conta nesta Central." });
   }
 

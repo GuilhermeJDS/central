@@ -14,12 +14,12 @@ const fmtData = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo"
 /** Minha conta: cartão com a foto à esquerda (4/12); dados e senha à direita (8/12). */
 export default async function PaginaMinhaConta() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/login?redirect=%2Fcentral%2Fconta");
+  if (!session?.user?.id) redirect("/entrar");
   const u = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { nome: true, sobrenome: true, email: true, telefone: true, fotoPerfil: true, createdAt: true },
   });
-  if (!u) redirect("/login");
+  if (!u) redirect("/entrar");
   const nome = [u.nome, u.sobrenome].filter(Boolean).join(" ");
 
   return (

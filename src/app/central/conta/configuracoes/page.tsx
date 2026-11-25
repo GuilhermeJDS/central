@@ -13,7 +13,7 @@ export const metadata = { title: "Configurações" };
 /** Configurações: aparência e avisos por e-mail. */
 export default async function PaginaConfiguracoes() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/login?redirect=%2Fcentral%2Fconta%2Fconfiguracoes");
+  if (!session?.user?.id) redirect("/entrar");
   const [tema, u] = await Promise.all([
     temaCentral(),
     prisma.user.findUnique({ where: { id: session.user.id }, select: { notificacoesEmail: true } }),

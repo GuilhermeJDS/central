@@ -47,10 +47,10 @@ async function nomeDaConta(accountId: string): Promise<string | null> {
   return a.fichaNegocio?.nomeNegocio || a.nome;
 }
 
-/** Sem sessão → /login. Os outros casos voltam como estado para a tela mostrar. */
+/** Sem sessão → /entrar. Os outros casos voltam como estado para a tela mostrar. */
 export const sessaoCentral = cache(async (): Promise<SessaoCentral> => {
   const session = await auth();
-  if (!session?.user) redirect(`/login?redirect=${encodeURIComponent("/central")}`);
+  if (!session?.user) redirect("/entrar");
   const admin = session.user.role === "SUPER_ADMIN";
   const primeiroNome = (session.user.name ?? "").trim().split(/\s+/)[0] ?? "";
 
