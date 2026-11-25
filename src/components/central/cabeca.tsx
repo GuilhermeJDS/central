@@ -29,7 +29,7 @@ export function CabecaPagina({
       <div className="cx-cabeca-texto">
         <p className="cx-sobrelinha">
           <span aria-hidden="true" className="cx-traco" />
-          Central · {secao}
+          {secao}
         </p>
         <h1 className="cx-titulo">
           {titulo}

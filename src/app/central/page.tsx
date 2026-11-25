@@ -27,7 +27,7 @@ export default async function PaginaInicio({ searchParams }: { searchParams: Pro
   return (
     <>
       <MarcaExemplo ativo={algumExemplo} />
-      <CabecaPagina secao="Início" titulo={`${saudacao()}, `} destaque={c.primeiroNome} subtitulo={subtitulo}>
+      <CabecaPagina secao="Início" titulo={c.nomeNegocio ? `Hoje na ${c.nomeNegocio}` : "Hoje na sua empresa"} subtitulo={subtitulo}>
         <SeletorPeriodo caminho="/central" atual={dias} />
         <AtualizarAgora />
       </CabecaPagina>
