@@ -91,7 +91,7 @@ export function TravaChefes({
             </h2>
             <p className="cx-card-sub">
               A Central trabalha só com a sua chave: Anthropic, OpenAI, Google, DeepSeek ou xAI, no modelo que você quiser.
-              Você cola a chave uma vez em Conexões, a Korely testa na hora e os chefes começam.
+              Você cola a chave uma vez em Conexões, a Central testa na hora e os chefes começam.
             </p>
             <Link href="/central/conexoes#chave-ia" className="cx-botao cx-botao--azul" onClick={() => setAbertoChave(false)}>
               Ir para Conexões

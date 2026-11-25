@@ -42,7 +42,7 @@ type Props = {
   chefe: string;
   /** Chefe que só faz leitura (sem pedido livre). */
   leitura: boolean;
-  /** Ticket de um pedido já disparado (ex.: "Korely, faz" no Norte). */
+  /** Ticket de um pedido já disparado (ex.: "A equipe faz" no Norte). */
   ticketInicial: unknown;
   /** Sem conta: nada vai ao servidor. */
   exemplo: boolean;
@@ -238,7 +238,7 @@ export function PedirChefe({ slug, chefe, leitura, ticketInicial, exemplo, embut
             />
             <button type="submit" className="cx-botao cx-botao--azul" disabled={enviando}>
               <Send size={17} strokeWidth={1.8} aria-hidden="true" />
-              {enviando ? "Enviando…" : "Korely, faz"}
+              {enviando ? "Enviando…" : "A equipe faz"}
             </button>
           </div>
         </form>

@@ -3,7 +3,7 @@
  * repositório daquela rede (vendor/skills) direto, sem o chefe escolher.
  * Módulo puro: a tela usa para montar os botões; o servidor valida por aqui.
  *
- * TikTok tem repositório próprio (vendor/skills/tiktok, escrito pela Korely):
+ * TikTok tem repositório próprio (vendor/skills/tiktok, escrito pela Central):
  * ideias, ganchos, roteiro, carrossel de fotos e legenda com hashtags.
  */
 import type { TipoEntrega } from "@/lib/central/entregas-tipos";

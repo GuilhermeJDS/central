@@ -12,26 +12,26 @@ import type { AcaoNorteView } from "@/components/central/tipos";
 import { JuntouDe } from "@/components/central/veio-de";
 import { useTrava } from "@/components/central/trava";
 
-type Escolha = "korely" | "eu" | "agora_nao";
+type Escolha = "equipe" | "eu" | "agora_nao";
 /** Estado de cada ação (decide a cor do card). */
-type Estado = "aberta" | "korely" | "voce" | "adiada";
+type Estado = "aberta" | "equipe" | "voce" | "adiada";
 
 const AVISO_EXEMPLO = "Isto é um exemplo: nada foi gravado.";
 
 const ROTULO_ESTADO: Record<Estado, string> = {
   aberta: "Aberta",
-  korely: "Feita pela Korely",
+  equipe: "Feita pela equipe",
   voce: "Feita por você",
   adiada: "Adiada",
 };
 
 function estadoDe(a: AcaoNorteView): Estado {
   if (a.decisao === "PASSADA") return "adiada";
-  if (a.decisao === "APROVADA") return a.korelyFaz ? "korely" : "voce";
+  if (a.decisao === "APROVADA") return a.equipeFaz ? "equipe" : "voce";
   return "aberta";
 }
 
-const aprovada = (e: Estado) => e === "korely" || e === "voce";
+const aprovada = (e: Estado) => e === "equipe" || e === "voce";
 
 /**
  * O único bloco preenchido do Início (DESIGN.md 6.4): as ações da semana do
@@ -87,15 +87,15 @@ export function CardNorte({
   function decidir(opcao: Escolha) {
     setErro(null);
     setAviso(null);
-    // "Korely faz" chama o chefe (modelo); as outras escolhas não.
-    if (opcao === "korely") {
+    // "A equipe faz" chama o chefe (modelo); as outras escolhas não.
+    if (opcao === "equipe") {
       if (trava.bloquear()) return;
     } else if (trava.travado) {
       trava.abrir();
       return;
     }
     const antes = estado;
-    marcar(opcao === "korely" ? "korely" : opcao === "eu" ? "voce" : "adiada");
+    marcar(opcao === "equipe" ? "equipe" : opcao === "eu" ? "voce" : "adiada");
     if (exemplo || !acao.execucaoId) {
       setAviso(AVISO_EXEMPLO);
       return;
@@ -147,14 +147,14 @@ export function CardNorte({
   const feitoTexto =
     estado === "adiada"
       ? "Fica para depois."
-      : estado === "korely"
-        ? "A Korely está cuidando disso."
+      : estado === "equipe"
+        ? "A equipe está cuidando disso."
         : "Combinado. Essa fica com você.";
 
   return (
     <div className="cx-norte-moldura" data-estado={estado}>
     <section className="cx-norte" data-estado={estado} data-ceu={placar} aria-labelledby="cx-norte-titulo">
-      {(["aberta", "korely", "voce", "adiada"] as const).map((e) => (
+      {(["aberta", "equipe", "voce", "adiada"] as const).map((e) => (
         <span key={e} className="cx-norte-fundo" data-fundo={e} data-ativo={e === estado ? "" : undefined} aria-hidden="true" />
       ))}
       <span className="cx-norte-ruido" aria-hidden="true" />
@@ -209,8 +209,8 @@ export function CardNorte({
         <div className="cx-norte-botoes">
           {estado === "aberta" ? (
             <>
-              <button type="button" className="cx-botao cx-botao--branco" disabled={pendente} onClick={() => decidir("korely")}>
-                Korely, faz
+              <button type="button" className="cx-botao cx-botao--branco" disabled={pendente} onClick={() => decidir("equipe")}>
+                A equipe faz
               </button>
               <button type="button" className="cx-botao cx-botao--vidro" disabled={pendente} onClick={() => decidir("eu")}>
                 Eu faço
@@ -224,7 +224,7 @@ export function CardNorte({
               <p className="cx-norte-feito" role="status">
                 {feitoTexto}
               </p>
-              {estado === "korely" && !exemplo && (linkAcompanhar || acao.slug) ? (
+              {estado === "equipe" && !exemplo && (linkAcompanhar || acao.slug) ? (
                 <Link href={linkAcompanhar ?? `/central/${acao.slug}`} className="cx-botao cx-botao--vidro">
                   Ver em {acao.departamentoNome}
                   <ArrowUpRight size={16} strokeWidth={2} aria-hidden="true" />

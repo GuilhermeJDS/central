@@ -2,16 +2,16 @@
  * Parte comum dos executar.ts das skills: manda o system prompt montado + a
  * entrada para o modelo da conta.
  *
- * Sem `credencial` (scripts locais) ou com a chave da Korely: Anthropic,
+ * Sem `credencial` (scripts locais) ou com a chave do ambiente (.env): Anthropic,
  * claude-opus-5-5 com raciocínio adaptativo (como sempre foi). Com a chave do
  * cliente: o provedor e o modelo que ele escolheu, sem raciocínio extra.
  */
-import { credencialKorely, modeloDe, SemChaveIA, type Credencial, type OrigemChave } from "@/lib/ia/credencial-base";
+import { credencialAmbiente, modeloDe, SemChaveIA, type Credencial, type OrigemChave } from "@/lib/ia/credencial-base";
 import type { ProvedorIA } from "@/lib/ia/provedores/catalogo";
 import { chamarModelo } from "@/lib/ia/provedores";
 import { comRestricoes, semTravessao } from "@/lib/lista-negra";
 
-export const MODELO_SKILL_KORELY = "claude-opus-5-5";
+export const MODELO_SKILL_PADRAO = "claude-opus-5-5";
 const MAX_TOKENS = 16000;
 const TIMEOUT_MS = 5 * 60 * 1000;
 
@@ -41,9 +41,9 @@ export async function rodarSkillNoModelo(system: string, entrada: EntradaModeloS
   if (!entrada.texto?.trim() && !entrada.imagens?.length) {
     throw new Error("Entrada vazia: mande texto ou imagens");
   }
-  const cred = entrada.credencial ?? credencialKorely();
+  const cred = entrada.credencial ?? credencialAmbiente();
   if (!cred) throw new SemChaveIA();
-  const modelo = modeloDe(cred, MODELO_SKILL_KORELY);
+  const modelo = modeloDe(cred, MODELO_SKILL_PADRAO);
 
   const r = await chamarModelo({
     provedor: cred.provedor,
@@ -55,7 +55,7 @@ export async function rodarSkillNoModelo(system: string, entrada: EntradaModeloS
     imagens: entrada.imagens,
     maxTokens: MAX_TOKENS,
     timeoutMs: TIMEOUT_MS,
-    pensar: cred.origem === "korely",
+    pensar: cred.origem === "ambiente",
   });
   if (!r.texto) throw new Error(`Resposta sem texto${r.cortada ? " (cortada no limite de tokens)" : ""}`);
 

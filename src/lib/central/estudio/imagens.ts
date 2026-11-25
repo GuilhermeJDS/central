@@ -1,7 +1,7 @@
 /**
  * Imagens do estúdio: identidade da marca (estilo + personagem), biblioteca
  * de imagens e geração com o modelo de imagem do CLIENTE (chave da OpenAI ou
- * do Gemini em Conexões). Nunca usa a chave da Korely para imagem.
+ * do Gemini em Conexões). Nunca usa a chave do ambiente (.env) para imagem.
  *
  * Mesmo estilo e mesmo personagem em todos os slides de uma peça: o pedido
  * leva o estilo e o personagem da Identidade e, a partir da segunda imagem

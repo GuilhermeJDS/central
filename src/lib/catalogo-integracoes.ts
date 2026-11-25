@@ -52,6 +52,7 @@ export const GRUPOS: Grupo[] = [
         campos: [
           { id: "url", rotulo: "Endereço do Rastro", tipo: "url", exemplo: "http://127.0.0.1:4310" },
           { id: "token", rotulo: "Token do Rastro", secreto: true, dica: "O mesmo RASTRO_TOKEN do servicos/rastro/.env." },
+          { id: "googlePlaces", rotulo: "Chave da Google Places API (reserva)", secreto: true, opcional: true, dica: "Se o Rastro estiver fora do ar, a busca usa a API oficial do Google. Tem cota grátis por mês." },
         ],
       },
     ],

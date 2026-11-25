@@ -43,7 +43,7 @@ function erroLinkedin(r: RespostaHttp, token: string): ErroRede {
   if (r.status === 403)
     return new ErroRede(REDE, "sem_permissao", "o token não tem a permissão para essa leitura no LinkedIn.");
   if (r.status === 426 || /version/i.test(msg))
-    return new ErroRede(REDE, "indisponivel", "a versão da API do LinkedIn configurada saiu do ar. Avise o suporte da Korely.");
+    return new ErroRede(REDE, "indisponivel", "a versão da API do LinkedIn configurada saiu do ar. Abra uma issue no GitHub da Central.");
   if (r.status === 429) {
     bloquearAte(REDE, impressao(token), Date.now() + HORA);
     return new ErroRede(REDE, "limite", "limite diário da API do LinkedIn atingido. Tente mais tarde.");

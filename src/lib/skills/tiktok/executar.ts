@@ -19,7 +19,7 @@ export type EntradaSkillTiktok = {
   texto: string
   imagens?: Array<{ base64: string; mediaType: string }>
   voz?: string
-  /** Chave da conta (lib/ia/credencial). Sem ela: chave da Korely. */
+  /** Chave da conta (lib/ia/credencial). Sem ela: chave do ambiente (.env). */
   credencial?: Credencial
 }
 

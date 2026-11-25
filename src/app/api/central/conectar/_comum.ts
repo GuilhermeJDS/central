@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth";
 import { cifrar, decifrar } from "@/lib/ia/cofre";
 import { baseApp, ehAlvoOAuth, type EstadoOAuth } from "@/lib/redes/oauth";
 
-export const COOKIE_OAUTH = "korely_central_oauth";
+export const COOKIE_OAUTH = "central_oauth";
 export const VALIDADE_ESTADO_MS = 10 * 60_000;
 
 /** Só o dono (CLIENT_ADMIN) ou o SUPER_ADMIN, sempre com a conta da sessão. */

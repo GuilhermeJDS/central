@@ -155,7 +155,7 @@ export async function concluirExecucao(
     tokensSaida: number;
     /** null/ausente: não chamou modelo (busca, cálculo em código). */
     provedor?: ProvedorIA | null;
-    /** "cliente": rodou na chave do cliente, custo 0 para a Korely. */
+    /** "cliente": rodou na chave do cliente, custo 0 para a Central. */
     origem?: OrigemChave;
   },
 ): Promise<void> {

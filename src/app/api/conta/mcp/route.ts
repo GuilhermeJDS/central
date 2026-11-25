@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const msg = e instanceof Error ? e.message : "Chave inválida.";
     return NextResponse.json(falha(null, -32001, msg), {
       status: 401,
-      headers: { "WWW-Authenticate": 'Bearer realm="korely-conta"' },
+      headers: { "WWW-Authenticate": 'Bearer realm="central"' },
     });
   }
 
@@ -51,9 +51,9 @@ async function tratar(ctx: Awaited<ReturnType<typeof autenticarConta>>, p: Pedid
       return resposta(p.id, {
         protocolVersion: VERSOES.includes(pedida) ? pedida : VERSOES[0],
         capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: "korely-conta", title: "Korely", version: "1.0.0" },
+        serverInfo: { name: "central", title: "Central", version: "1.0.0" },
         instructions:
-          "Ferramentas da conta Korely do cliente: ler decisões e entregas dos chefes, decidir, pedir trabalho e ver execuções. Comece por ler_conta.",
+          "Ferramentas da Central da empresa: ler decisões e entregas dos chefes, decidir, pedir trabalho e ver execuções. Comece por ler_conta.",
       });
     }
     case "ping":

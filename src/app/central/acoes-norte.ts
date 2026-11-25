@@ -40,11 +40,11 @@ export async function gerarAcaoDaSemanaAcao(): Promise<{ erro: string | null }> 
   return { erro: null };
 }
 
-const escolhaNorteSchema = z.enum(["korely", "eu", "agora_nao"]);
+const escolhaNorteSchema = z.enum(["equipe", "eu", "agora_nao"]);
 
 export type ResultadoNorte = {
   erro: string | null;
-  /** "Korely, faz": onde acompanhar o pedido que foi para o chefe. */
+  /** "A equipe faz": onde acompanhar o pedido que foi para o chefe. */
   acompanhar?: string | null;
 };
 
@@ -52,8 +52,8 @@ export async function decidirNorteAcao(execucaoId: string, escolha: string): Pro
   const opcao = escolhaNorteSchema.parse(escolha);
   let accountId: string;
   try {
-    // "Korely faz" chama o modelo: precisa da chave de IA.
-    ({ accountId } = opcao === "korely" ? await contaCentralGeracao() : await contaCentral());
+    // "A equipe faz" chama o modelo: precisa da chave de IA.
+    ({ accountId } = opcao === "equipe" ? await contaCentralGeracao() : await contaCentral());
   } catch (e) {
     return { erro: mensagemParaDono(e, "Sem acesso agora.") };
   }
@@ -82,12 +82,12 @@ export async function decidirNorteAcao(execucaoId: string, escolha: string): Pro
   });
   if (count === 0) return { erro: null };
 
-  if (opcao !== "korely") {
+  if (opcao !== "equipe") {
     revalidatePath("/central");
     return { erro: null };
   }
 
-  // A Korely faz: o pedido vai para o chefe (em segundo plano) e o card
+  // A equipe faz: o pedido vai para o chefe (em segundo plano) e o card
   // continua no Início, com "Mudar de ideia" e o link para acompanhar.
   const dep = departamentoPorChefe(acao.chefe);
   const ticket = await dispararChefe(
@@ -101,7 +101,7 @@ export async function decidirNorteAcao(execucaoId: string, escolha: string): Pro
 }
 
 /**
- * "Mudar de ideia": a ação volta a ficar aberta. Só nesta semana. Se a Korely
+ * "Mudar de ideia": a ação volta a ficar aberta. Só nesta semana. Se a equipe
  * já tinha mandado o pedido ao chefe, ele segue (o trabalho vira uma decisão
  * normal na pilha); o que volta é a escolha.
  */

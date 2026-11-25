@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 
 import { AbasConta } from "./_abas";
 
-export const metadata = { title: "Korely — Minha conta" };
+export const metadata = { title: "Minha conta" };
 
 const fmtData = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", month: "long", year: "numeric" });
 
@@ -33,7 +33,7 @@ export default async function PaginaMinhaConta() {
           <div className="cx-conta-cartao-quem">
             <p className="cx-conta-cartao-nome">{nome}</p>
             <p className="cx-conta-cartao-email">{u.email}</p>
-            <p className="cx-dica">Na Korely desde {fmtData.format(u.createdAt)}</p>
+            <p className="cx-dica">Na Central desde {fmtData.format(u.createdAt)}</p>
           </div>
         </section>
         <div className="cx-bloco cx-card cx-conta-forms">

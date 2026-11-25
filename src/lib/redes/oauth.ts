@@ -2,7 +2,7 @@
  * "Conectar com…" (OAuth): a pessoa entra na plataforma, autoriza e volta
  * para a Central já conectada. Convive com o "colar token" (fluxo avançado).
  *
- * Cada plataforma só liga quando o app da Korely estiver no ambiente:
+ * Cada plataforma só liga quando o app do .env estiver no ambiente:
  *   Google (YouTube + Google Empresa)  GOOGLE_OAUTH_CLIENT_ID / GOOGLE_OAUTH_CLIENT_SECRET
  *   Instagram (login do Instagram)     INSTAGRAM_APP_ID / INSTAGRAM_APP_SECRET
  *   LinkedIn                           LINKEDIN_CLIENT_ID / LINKEDIN_CLIENT_SECRET
@@ -58,7 +58,7 @@ export function redesComOAuth(): RedeConectavel[] {
 
 export function baseApp(): string {
   // OAUTH_BASE_URL: só para testar o retorno em outro endereço (ex.: http://localhost:3001).
-  return (process.env.OAUTH_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "https://korely.com.br").replace(/\/+$/, "");
+  return (process.env.OAUTH_BASE_URL || process.env.APP_URL || "http://localhost:3000").replace(/\/+$/, "");
 }
 
 export function uriRetorno(alvo: AlvoOAuth): string {
@@ -198,7 +198,7 @@ export async function trocarCodigoRede(e: EstadoOAuth, codigo: string): Promise<
       const precisa = e.alvo === "youtube" ? ["youtube.readonly"] : ["business.manage"];
       if (!precisa.every((p) => escopos.includes(p)))
         throw new ErroRede(rede, "sem_permissao", "faltou marcar a permissão de leitura na tela do Google. Conecte de novo e deixe as caixas marcadas.");
-      if (!refresh) throw new ErroRede(rede, "entrada", "o Google não mandou o acesso permanente. Remova a Korely em myaccount.google.com/permissions e conecte de novo.");
+      if (!refresh) throw new ErroRede(rede, "entrada", "o Google não mandou o acesso permanente. Remova a Central em myaccount.google.com/permissions e conecte de novo.");
       // Guarda o de renovação (1//…): não vence; o de acesso sai dele na hora de usar.
       return { token: refresh, refresh: e.alvo === "youtube" ? refresh : null, expiraEm: null };
     }

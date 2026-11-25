@@ -13,7 +13,7 @@
  *
  * Chefes: só rodam com a conta liberada (lib/central/liberacao) e com a
  * chave de IA do próprio cliente (Conexões → Chave de IA). A Central nunca
- * usa a chave da Korely, em nenhum caso (nem SUPER_ADMIN).
+ * usa a chave do ambiente (.env), em nenhum caso (nem SUPER_ADMIN).
  */
 import "server-only";
 

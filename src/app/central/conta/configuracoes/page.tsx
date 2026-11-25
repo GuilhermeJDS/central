@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { temaCentral } from "../../_lib/sessao";
 import { AbasConta } from "../_abas";
 
-export const metadata = { title: "Korely — Configurações" };
+export const metadata = { title: "Configurações" };
 
 /** Configurações: aparência e avisos por e-mail. */
 export default async function PaginaConfiguracoes() {
@@ -20,7 +20,7 @@ export default async function PaginaConfiguracoes() {
   ]);
   return (
     <>
-      <CabecaPagina secao="Conta" titulo="Configurações" subtitulo="Como a Korely aparece e o que chega no seu e-mail.">
+      <CabecaPagina secao="Conta" titulo="Configurações" subtitulo="Como a Central aparece e o que chega no seu e-mail.">
         <AbasConta atual="/central/conta/configuracoes" />
       </CabecaPagina>
       <div className="cx-g12">

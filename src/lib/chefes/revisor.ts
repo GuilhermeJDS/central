@@ -187,7 +187,7 @@ async function regrasDaListaNegra(): Promise<Regra[]> {
           {
             tipo: "lista_negra" as const,
             termo: i.termo,
-            motivo: `Lista Negra da Korely${i.motivo ? ` (${i.motivo})` : ""}${
+            motivo: `Lista Negra${i.motivo ? ` (${i.motivo})` : ""}${
               i.substituicaoSugerida !== null ? `; troque por "${i.substituicaoSugerida}"` : "; tire ou reescreva"
             }`,
             regex: i.regex,
@@ -235,7 +235,7 @@ const PROMPT_REVISOR = [
   "- Travessão \"—\": troque por vírgula, ponto ou dois-pontos, o que ficar natural.",
   "- Expressão de IA: troque por uma forma simples e direta, do jeito que uma pessoa falaria.",
   "- Termo que o dono não quer: tire ou troque por algo neutro.",
-  "- Lista Negra da Korely: use a troca indicada; sem troca, tire ou reescreva o trecho sem o termo.",
+  "- Lista Negra: use a troca indicada; sem troca, tire ou reescreva o trecho sem o termo.",
   "- Sinal de fora do Brasil: troque por equivalente brasileiro (R$, Pix, Mercado Pago). Se for um valor em dólar sem conversão conhecida, tire o valor em vez de inventar um.",
   "- NUNCA invente conteúdo novo: nada de frases, dados, números, promessas ou ideias que não estavam no texto.",
   "",
@@ -268,7 +268,7 @@ export async function revisar(
   accountId: string,
   execucaoSkillId: string,
   texto: string,
-  /** Painel da unidade passa a chave da Korely; sem ela, a da conta. */
+  /** Sem chave passada, usa a da conta. */
   credencial?: Credencial,
   /** Com evidência (o que a skill recebeu), roda o crash-out antes. */
   opcoes: { evidencia?: string } = {},

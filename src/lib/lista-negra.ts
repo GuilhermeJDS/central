@@ -117,7 +117,7 @@ export async function blocoRestricoesListaNegra(): Promise<string> {
   for (const i of itens.filter((x) => x.tipo === "REGRA_COPY").slice(0, 80)) {
     linhas.push(`- ${i.termo}${i.motivo ? ` (${i.motivo})` : ""}`);
   }
-  return ["<restricoes_lista_negra>", "Regras de texto da Korely, valem para toda resposta:", ...linhas, "</restricoes_lista_negra>"].join("\n");
+  return ["<restricoes_lista_negra>", "Regras de texto da empresa, valem para toda resposta:", ...linhas, "</restricoes_lista_negra>"].join("\n");
 }
 
 /** Junta o bloco ao system prompt (uma vez só). */

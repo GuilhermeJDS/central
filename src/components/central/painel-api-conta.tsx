@@ -85,7 +85,7 @@ export function PainelApiConta({
 }: {
   chaves: ChaveContaView[];
   ferramentas: FerramentaView[];
-  /** https://korely.com.br (sem barra no fim). */
+  /** Endereço público da Central (sem barra no fim). */
   base: string;
   podeEditar: boolean;
   agora: number;
@@ -102,11 +102,11 @@ export function PainelApiConta({
 
   const urlMcp = `${base}/api/conta/mcp`;
   const chaveNosExemplos = nova ?? "SUA_CHAVE";
-  const comandoClaude = `claude mcp add --transport http korely ${urlMcp} --header "Authorization: Bearer ${chaveNosExemplos}"`;
+  const comandoClaude = `claude mcp add --transport http central ${urlMcp} --header "Authorization: Bearer ${chaveNosExemplos}"`;
   const json = JSON.stringify(
     {
       mcpServers: {
-        korely: {
+        central: {
           type: "http",
           url: urlMcp,
           headers: { Authorization: `Bearer ${chaveNosExemplos}` },

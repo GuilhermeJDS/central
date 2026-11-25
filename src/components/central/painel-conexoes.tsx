@@ -32,7 +32,7 @@ type Props = {
   leituras: Partial<Record<RedeConectavel, LeituraRede>>;
   podeEditar: boolean;
   agora: number;
-  /** "Conectar com…" ligado (o app da Korely está no ambiente). */
+  /** "Conectar com…" ligado (o app do .env está no ambiente). */
   oauth: { redes: RedeConectavel[]; openrouter: boolean };
   /** Aviso da volta do "Conectar com…" (já decifrado no servidor). */
   aviso: { ok: boolean; mensagem: string } | null;
@@ -568,7 +568,7 @@ function BlocosRedes({ conexoes, leituras, podeEditar, agora, acoes, oauth }: Pr
         <h2 id="cx-con-redes" className="cx-con-secao-titulo">
           Redes
         </h2>
-        <p className="cx-con-secao-apoio">Conectadas, os chefes trabalham com os seus números reais. A Korely só lê; não publica nada.</p>
+        <p className="cx-con-secao-apoio">Conectadas, os chefes trabalham com os seus números reais. A Central só lê daqui; quem publica é o Buffer, depois da sua aprovação.</p>
       </div>
       <ul className="cx-redes-blocos">
         {REDES_CONECTAVEIS.map((rede) => {

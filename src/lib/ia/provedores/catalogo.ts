@@ -65,7 +65,7 @@ export const CATALOGO_IA: Record<ProvedorIA, InfoProvedor> = {
 };
 
 /**
- * Provedores com que a Korely já rodou os chefes de ponta a ponta.
+ * Provedores com que a Central já rodou os chefes de ponta a ponta.
  * Atualizar aqui quando um provedor novo passar no teste completo.
  */
 export const PROVEDORES_TESTADOS: ProvedorIA[] = ["ANTHROPIC"];

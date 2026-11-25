@@ -3,7 +3,7 @@
  * do Google e o token OAuth colado pelo cliente.
  *
  * Token de acesso (ya29.…) vale 1 hora. Token de renovação (1//…) só funciona
- * com o app OAuth da Korely (GOOGLE_OAUTH_CLIENT_ID / _SECRET); sem ele, a
+ * com o app OAuth do .env (GOOGLE_OAUTH_CLIENT_ID / _SECRET); sem ele, a
  * mensagem pede o token de acesso.
  */
 import "server-only";
@@ -42,7 +42,7 @@ export function erroGoogle(
   if (/API_KEY_INVALID|keyInvalid|API key not valid/i.test(`${motivos} ${msg}`))
     return new ErroRede(rede, "token_invalido", "a API key não é válida. Confira se colou a chave inteira.");
   if (/API_KEY_(HTTP_REFERRER|IP_ADDRESS|SERVICE)_BLOCKED|API_KEY_SERVICE_BLOCKED/i.test(motivos))
-    return new ErroRede(rede, "sem_permissao", "a chave tem uma restrição (site, IP ou API) que bloqueia a Korely. Tire a restrição ou libere a API.");
+    return new ErroRede(rede, "sem_permissao", "a chave tem uma restrição (site, IP ou API) que bloqueia a Central. Tire a restrição ou libere a API.");
   if (/accessNotConfigured|SERVICE_DISABLED/i.test(motivos) || /has not been used in project|is disabled/i.test(msg))
     return new ErroRede(rede, "sem_permissao", `a ${ctx.api} não está ativada no projeto do Google Cloud dessa chave. Ative e tente de novo.`);
   if (/quotaExceeded|dailyLimitExceeded|RATE_LIMIT_EXCEEDED|rateLimitExceeded|RESOURCE_EXHAUSTED|userRateLimitExceeded/i.test(motivos) || r.status === 429) {
@@ -78,7 +78,7 @@ export async function tokenGoogle(rede: RedeConectavel, colado: string, app?: Ap
   if (emCache) return emCache;
 
   if (token.startsWith("1//")) {
-    // App do próprio cliente (colado no guia) ou o app OAuth da Korely.
+    // App do próprio cliente (colado no guia) ou o app OAuth do .env.
     const id = app?.id || process.env.GOOGLE_OAUTH_CLIENT_ID?.trim();
     const segredo = app?.segredo || process.env.GOOGLE_OAUTH_CLIENT_SECRET?.trim();
     if (!id || !segredo)

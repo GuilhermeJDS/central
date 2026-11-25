@@ -170,7 +170,7 @@ export async function blocoNorte(c: ContextoCentral): Promise<Fonte<NorteView>> 
         titulo: atual.acao.titulo,
         porQue: atual.acao.porQue,
         decisao: atual.decisao,
-        korelyFaz: atual.korelyFaz,
+        equipeFaz: atual.equipeFaz,
         fontes: atual.fontes,
       };
     }),

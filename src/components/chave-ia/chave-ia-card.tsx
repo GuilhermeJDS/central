@@ -183,7 +183,7 @@ export function CardChaveIA({
           Chave de IA
         </h2>
         <p className={c.sub}>
-          Os chefes trabalham com a sua chave. O uso é cobrado direto pelo provedor, na sua conta; a Korely não cobra
+          Os chefes trabalham com a sua chave. O uso é cobrado direto pelo provedor, na sua conta; a Central não cobra
           nada a mais por isso.
         </p>
       </div>

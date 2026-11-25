@@ -40,7 +40,7 @@ export function TopoChefe({
         <div className="cx-topo-chefe-textos">
           <p className="cx-sobrelinha">
             <span aria-hidden="true" className="cx-traco" />
-            Korely · {secao}
+            Central · {secao}
           </p>
           <h1 id="cx-topo-chefe-t" className="cx-titulo cx-topo-chefe-titulo">
             {titulo ?? secao}

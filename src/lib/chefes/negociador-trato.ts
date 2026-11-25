@@ -7,7 +7,7 @@
  * proposta grande). O cardápio com o nome de cada ação fica em cardapio.ts.
  *
  * As skills que no repositório original leem o CRM, o Gmail, a agenda ou a
- * web rodam aqui com o que a Korely tem: a ficha, os números do negócio
+ * web rodam aqui com o que a Central tem: a ficha, os números do negócio
  * (atendimentos, clientes sumidos, receita, calculados em código pelo
  * Gerente Rotina) e o que o dono escrever no pedido. Nenhum script roda.
  */

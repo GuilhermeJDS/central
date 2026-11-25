@@ -605,13 +605,13 @@
   color: #ffffff;
   isolation: isolate;
   overflow: hidden;
-  /* K da Korely recortado do canto superior direito (estilo pôster): a forma
+  /* Mascote da Central recortado do canto superior direito (estilo pôster): a forma
      do K é subtraída do card e o fundo da página aparece pelo recorte. */
   --k-altura: clamp(232px, 29cqi, 312px);
   --k-direita: -32px;
   --k-topo: -56px;
-  -webkit-mask-image: url("/central/k-korely.svg"), linear-gradient(#000 0 0);
-  mask-image: url("/central/k-korely.svg"), linear-gradient(#000 0 0);
+  -webkit-mask-image: url("/central/marca-central.svg"), linear-gradient(#000 0 0);
+  mask-image: url("/central/marca-central.svg"), linear-gradient(#000 0 0);
   -webkit-mask-size: auto var(--k-altura), 100% 100%;
   mask-size: auto var(--k-altura), 100% 100%;
   -webkit-mask-position: right var(--k-direita) top var(--k-topo), 0 0;
@@ -635,7 +635,7 @@
 .cx-norte-fundo { position: absolute; inset: 0; z-index: -2; opacity: 0; transition: opacity 0.45s var(--cx-mola); }
 .cx-norte-fundo[data-ativo] { opacity: 1; }
 .cx-norte-fundo[data-fundo="aberta"] { background: linear-gradient(115deg, #0b2370 0%, #1a45c4 34%, #2f6af7 68%, #4c55e0 100%); }
-.cx-norte-fundo[data-fundo="korely"] { background: linear-gradient(115deg, #052b1c 0%, #0b5a33 36%, #15803d 70%, #1f6f6a 100%); }
+.cx-norte-fundo[data-fundo="equipe"] { background: linear-gradient(115deg, #052b1c 0%, #0b5a33 36%, #15803d 70%, #1f6f6a 100%); }
 .cx-norte-fundo[data-fundo="voce"] { background: linear-gradient(115deg, #15163f 0%, #2a2d78 36%, #3a3f9a 70%, #5a46b8 100%); }
 .cx-norte-fundo[data-fundo="adiada"] { background: linear-gradient(115deg, #141414 0%, #262626 36%, #3d3d3d 70%, #3f3f52 100%); }
 /* Ruído fino por cima do gradiente (tira a cara de plástico). */
@@ -644,7 +644,7 @@
   opacity: 0.32; mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.cx-norte-moldura[data-estado="korely"] { --norte-sombra: #15803d; }
+.cx-norte-moldura[data-estado="equipe"] { --norte-sombra: #15803d; }
 .cx-norte-moldura[data-estado="voce"] { --norte-sombra: #3a3f9a; }
 .cx-norte-moldura[data-estado="adiada"] { --norte-sombra: #3d3d3d; }
 
@@ -686,7 +686,7 @@
 }
 .cx-norte-estado::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ffffff; }
 .cx-norte-estado[data-estado="aberta"]::before { background: #ffd28a; }
-.cx-norte-estado[data-estado="korely"]::before { background: #7fd894; }
+.cx-norte-estado[data-estado="equipe"]::before { background: #7fd894; }
 .cx-norte-estado[data-estado="voce"]::before { background: #c9cbff; }
 .cx-norte-estado[data-estado="adiada"]::before { background: #b5b2aa; }
 .cx-norte-titulo {

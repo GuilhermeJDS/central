@@ -246,7 +246,7 @@ const RENOVAR_ANTES_MS = 7 * 86_400_000;
 /**
  * Abre a conexão para ler, renovando o token na hora de usar quando dá:
  * - Instagram: faltando 7 dias ou menos, troca por um novo de 60 dias (IG… pela
- *   Meta; EAA… com o app do cliente ou o da Korely) e grava.
+ *   Meta; EAA… com o app do cliente ou o do .env) e grava.
  * - Google (YouTube OAuth e Google Empresa): token de renovação 1//… vira um
  *   de acesso novo a cada hora, com o app do cliente.
  * - Venceu e não tem como renovar: marca como caído (a tela pede um novo).

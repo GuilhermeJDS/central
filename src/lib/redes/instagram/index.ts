@@ -336,7 +336,7 @@ export async function renovar(
     const seg = numero(campo(r.corpo, "expires_in")) ?? VALIDADE_TOKEN_LONGO_MS / 1000;
     return { token: novo, expiraEm: new Date(Date.now() + seg * 1000) };
   }
-  // App do próprio cliente (colado no guia) ou o app da Korely.
+  // App do próprio cliente (colado no guia) ou o app do .env.
   const appId = app?.id || process.env.META_APP_ID?.trim();
   const segredo = app?.segredo || process.env.META_APP_SECRET?.trim();
   if (!appId || !segredo) return null;

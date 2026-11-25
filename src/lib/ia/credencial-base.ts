@@ -4,12 +4,13 @@
  */
 import type { ProvedorIA } from "@/lib/ia/provedores/catalogo";
 
-export type OrigemChave = "cliente" | "korely";
+/** "ambiente": ANTHROPIC_API_KEY do .env (scripts e testes locais). */
+export type OrigemChave = "cliente" | "ambiente";
 
 export type Credencial = {
   provedor: ProvedorIA;
   chave: string;
-  /** null = chave da Korely: quem chama usa o modelo padrão dele. */
+  /** null = chave do ambiente: quem chama usa o modelo padrão dele. */
   modelo: string | null;
   origem: OrigemChave;
 };
@@ -23,21 +24,21 @@ export class SemChaveIA extends Error {
   }
 }
 
-export function credencialKorely(): Credencial | null {
+export function credencialAmbiente(): Credencial | null {
   const chave = process.env.ANTHROPIC_API_KEY?.trim();
-  return chave ? { provedor: "ANTHROPIC", chave, modelo: null, origem: "korely" } : null;
+  return chave ? { provedor: "ANTHROPIC", chave, modelo: null, origem: "ambiente" } : null;
 }
 
 /**
- * Painel da unidade: sempre a chave da Korely (ANTHROPIC_API_KEY), nunca a do
- * cliente. Sem a variável no servidor, erro que pode ir para o dono.
+ * Chave do ambiente (ANTHROPIC_API_KEY do .env). Só scripts locais usam;
+ * os chefes da Central sempre rodam com a chave que a pessoa colou.
  */
-export function credencialKorelyPainel(): Credencial {
-  const c = credencialKorely();
+export function credencialAmbientePainel(): Credencial {
+  const c = credencialAmbiente();
   if (!c) throw new Error("Os chefes estão fora do ar agora. Tente de novo em alguns minutos.");
   return c;
 }
 
-export function modeloDe(c: Credencial, padraoKorely: string): string {
-  return c.modelo ?? padraoKorely;
+export function modeloDe(c: Credencial, padrao: string): string {
+  return c.modelo ?? padrao;
 }

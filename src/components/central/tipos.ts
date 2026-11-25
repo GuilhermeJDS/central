@@ -19,7 +19,7 @@ export type AcaoNorteView = {
   titulo: string;
   porQue: string;
   decisao: "PENDENTE" | "APROVADA" | "PASSADA" | "AJUSTAR" | null;
-  korelyFaz: boolean;
+  equipeFaz: boolean;
   /** Quem o Norte juntou nesta ação (departamentos conectados). */
   fontes?: Array<{ chefe: string; titulo: string }>;
 };

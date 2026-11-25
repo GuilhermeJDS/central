@@ -113,8 +113,8 @@ export type AcaoAtual = {
   acao: AcaoDaSemana;
   fontes: Array<{ chefe: string; titulo: string }>;
   decisao: ExecucaoSkill["decisao"];
-  /** "Korely, faz" disparou um pedido ao chefe (execução filha). */
-  korelyFaz: boolean;
+  /** "A equipe faz" disparou um pedido ao chefe (execução filha). */
+  equipeFaz: boolean;
 };
 
 /** Máximo de ações do Norte por semana (o placar vai até 5). */
@@ -148,10 +148,10 @@ export async function acoesDaSemana(accountId: string): Promise<AcaoAtual[]> {
   for (const e of linhas) {
     const acao = lerJson<AcaoDaSemana>(e.saida);
     if (!acao?.titulo) continue;
-    let korelyFaz = e.decisao === "APROVADA" && (e.escolha === "korely" || (e.escolha === null && e._count.filhas > 0));
+    let equipeFaz = e.decisao === "APROVADA" && (e.escolha === "equipe" || (e.escolha === null && e._count.filhas > 0));
     // Ações antigas (sem "escolha"): Gerente Rotina e Inspetor Rastro fazem leitura própria.
-    if (!korelyFaz && e.escolha === null && e.decisao === "APROVADA" && e.decididaEm && LEITURAS[acao.chefe]) {
-      korelyFaz =
+    if (!equipeFaz && e.escolha === null && e.decisao === "APROVADA" && e.decididaEm && LEITURAS[acao.chefe]) {
+      equipeFaz =
         (await prisma.execucaoSkill.count({
           where: {
             accountId,
@@ -162,13 +162,13 @@ export async function acoesDaSemana(accountId: string): Promise<AcaoAtual[]> {
         })) > 0;
     }
     const fontes = fontesDaEntrada(e.entrada).map((f) => ({ chefe: f.chefe, titulo: f.titulo }));
-    acoes.push({ execucaoId: e.id, acao, fontes, decisao: e.decisao, korelyFaz });
+    acoes.push({ execucaoId: e.id, acao, fontes, decisao: e.decisao, equipeFaz });
   }
   return acoes;
 }
 
 /**
- * 0–5: ações do Norte desta semana já feitas ("Korely, faz" ou "Eu faço").
+ * 0–5: ações do Norte desta semana já feitas ("A equipe faz" ou "Eu faço").
  * "Agora não" (PASSADA) e as ações ainda abertas não contam.
  */
 export async function ceuDaSemana(accountId: string): Promise<number> {
@@ -741,7 +741,7 @@ export async function jaAprovou(accountId: string): Promise<boolean> {
 }
 
 /**
- * Atendimentos por dia: vinham da agenda da Korely. A versão aberta guarda os
+ * Atendimentos por dia: vinham de uma agenda externa. A versão aberta guarda os
  * números por mês (numeros_mes), então não há série diária: null = sem série.
  */
 export async function atendimentosPorDia(

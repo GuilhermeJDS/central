@@ -90,7 +90,7 @@ export async function postsDaConta(accountId: string, rede: string | null): Prom
     return {
       ok: false,
       motivo: "sem_rede",
-      mensagem: `O ${NOME[rede] ?? rede} ainda não conecta na Korely. Dá para marcar a peça como publicada.`,
+      mensagem: `O ${NOME[rede] ?? rede} ainda não conecta na Central. Dá para marcar a peça como publicada.`,
     };
   try {
     const lista = await buscar(accountId, rede);

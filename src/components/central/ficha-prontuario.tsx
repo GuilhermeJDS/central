@@ -260,7 +260,7 @@ export function FichaProntuario({ inicial, exemplo, logo }: { inicial: FichaView
 
 function iniciais(nome: string): string {
   const p = nome.trim().split(/\s+/).filter((x) => x.length > 2 || /^[A-Z]/.test(x));
-  return ((p[0]?.[0] ?? "K") + (p[1]?.[0] ?? "")).toUpperCase();
+  return ((p[0]?.[0] ?? "C") + (p[1]?.[0] ?? "")).toUpperCase();
 }
 
 function Anel({ pct }: { pct: number }) {

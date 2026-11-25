@@ -1,6 +1,6 @@
 /**
  * Chamada ao modelo dos chefes. Usa a chave da conta (lib/ia/credencial):
- * a do cliente, no provedor e modelo que ele escolheu, ou a da Korely
+ * a do cliente, no provedor e modelo que ele escolheu, ou a do ambiente
  * (Anthropic, MODELO_CHEFES). Lança erro em vez de devolver null, para o
  * chamador registrar a falha na execução.
  */

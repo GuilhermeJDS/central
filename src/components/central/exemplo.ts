@@ -65,7 +65,7 @@ export const ACAO_EXEMPLO: AcaoNorteView = {
   porQue:
     "Você tem 86 avaliações e a clínica mais perto tem 214. Quem procura no Google escolhe pelo número de avaliações antes de olhar a nota.",
   decisao: "PENDENTE",
-  korelyFaz: false,
+  equipeFaz: false,
 };
 
 /** As ações da semana do exemplo (setas no card do Norte). */
@@ -79,7 +79,7 @@ export const ACOES_EXEMPLO: AcaoNorteView[] = [
     titulo: "Postar um carrossel de antes e depois da limpeza de pele.",
     porQue: "Os posts com resultado real são os que mais trouxeram mensagens no último mês.",
     decisao: "APROVADA",
-    korelyFaz: true,
+    equipeFaz: true,
   },
   {
     execucaoId: null,
@@ -89,7 +89,7 @@ export const ACOES_EXEMPLO: AcaoNorteView[] = [
     titulo: "Chamar de volta quem não volta há mais de 45 dias.",
     porQue: "São clientes que já confiam em você: voltar custa menos que conquistar uma nova.",
     decisao: "APROVADA",
-    korelyFaz: false,
+    equipeFaz: false,
   },
 ];
 

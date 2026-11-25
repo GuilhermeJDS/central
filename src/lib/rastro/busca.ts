@@ -17,6 +17,8 @@ import "server-only";
 
 import { z } from "zod";
 
+import { ativo } from "@/lib/config";
+
 export type FonteRastro = "reach" | "google";
 
 export type Lugar = {
@@ -91,10 +93,12 @@ function lugaresDoReach(corpo: unknown): Lugar[] {
 }
 
 async function chamarReach(caminho: "/buscar" | "/vizinhos", corpo: Record<string, unknown>): Promise<Lugar[]> {
-  const base = process.env.RASTRO_URL?.trim();
-  const token = process.env.RASTRO_TOKEN?.trim();
-  if (!base) throw new ReachIndisponivel("RASTRO_URL não configurada");
-  if (!token) throw new ReachIndisponivel("RASTRO_TOKEN não configurado");
+  // Conexões → Rastro (ou RASTRO_URL/RASTRO_TOKEN do .env que o setup escreve).
+  const cfg = await ativo("rastro");
+  const base = String(cfg?.valores.url ?? "").trim().replace(/\/+$/, "");
+  const token = String(cfg?.valores.token ?? "").trim();
+  if (!base) throw new ReachIndisponivel("Rastro não configurado (Conexões → Rastro)");
+  if (!token) throw new ReachIndisponivel("Token do Rastro não configurado");
 
   let resposta: Response;
   try {
@@ -154,8 +158,9 @@ function lugarDoGoogle(p: PlaceGoogle): Lugar | null {
 }
 
 async function chamarGoogle(textQuery: string, pageSize: number): Promise<Lugar[]> {
-  const chave = process.env.GOOGLE_PLACES_API_KEY?.trim();
-  if (!chave) throw new Error("GOOGLE_PLACES_API_KEY não configurada");
+  const cfg = await ativo("rastro");
+  const chave = String(cfg?.valores.googlePlaces ?? process.env.GOOGLE_PLACES_API_KEY ?? "").trim();
+  if (!chave) throw new Error("sem a chave reserva do Google Places (Conexões → Rastro)");
 
   const resposta = await fetch(URL_GOOGLE, {
     method: "POST",

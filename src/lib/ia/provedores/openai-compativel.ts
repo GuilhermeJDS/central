@@ -54,8 +54,8 @@ export async function chamarOpenAICompativel(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${p.chave}`,
-        // OpenRouter: identifica a Korely no painel de uso do cliente.
-        ...(p.provedor === "OPENROUTER" ? { "HTTP-Referer": "https://korely.com.br", "X-Title": "Korely" } : {}),
+        // OpenRouter: identifica a Central no painel de uso do cliente.
+        ...(p.provedor === "OPENROUTER" ? { "HTTP-Referer": "https://github.com/matheusmongarde/central", "X-Title": "Central" } : {}),
       },
       body: JSON.stringify({
         model: p.modelo,

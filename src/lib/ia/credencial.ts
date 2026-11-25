@@ -2,10 +2,10 @@
  * Qual chave de IA roda os chefes desta conta na Central.
  *
  * SÓ a chave do próprio cliente (modelo do chefe → chave validada mais
- * recente). A Central nunca usa a chave da Korely, em nenhum caso (nem
+ * recente). A Central nunca usa a chave do ambiente (.env), em nenhum caso (nem
  * SUPER_ADMIN, nem dev local): sem chave conectada → SemChaveIA, e a tela
  * abre "Conecte a sua chave de IA". O painel da unidade é separado: passa
- * sempre credencialKorelyPainel explicitamente.
+ * sempre credencialAmbientePainel explicitamente.
  *
  * A chave decifrada fica só na memória do servidor durante a chamada.
  */
@@ -16,8 +16,8 @@ import { SemChaveIA, type Credencial } from "@/lib/ia/credencial-base";
 import { prisma } from "@/lib/prisma";
 
 export {
-  credencialKorely,
-  credencialKorelyPainel,
+  credencialAmbiente,
+  credencialAmbientePainel,
   MENSAGEM_SEM_CHAVE,
   modeloDe,
   SemChaveIA,
@@ -65,7 +65,7 @@ async function chaveDoChefe(accountId: string, chefe: string): Promise<Credencia
 /**
  * Modelo do chefe (se escolhido) → chave do cliente → SemChaveIA.
  * Sem `chefe` (ou sem escolha), todos usam o mesmo: a chave ativa.
- * Nunca cai na chave da Korely.
+ * Nunca cai na chave do ambiente (.env).
  */
 export async function credencialDaConta(accountId: string, chefe?: string): Promise<Credencial> {
   const doChefe = chefe ? await chaveDoChefe(accountId, chefe) : null;

@@ -188,7 +188,7 @@ export const CATALOGO_REDES: Record<RedeConectavel, InfoRede> = {
     guia: [
       {
         titulo: "Crie um projeto no Google Cloud",
-        texto: "Entre com a conta Google do canal e crie um projeto (ex.: Korely).",
+        texto: "Entre com a conta Google do canal e crie um projeto (ex.: Central).",
         link: { rotulo: "Criar projeto", url: "https://console.cloud.google.com/projectcreate" },
         midia: "/central/guias/youtube/passo-1.webp",
         legenda: "Novo projeto: dê um nome e clique em Criar.",
@@ -247,7 +247,7 @@ export const CATALOGO_REDES: Record<RedeConectavel, InfoRede> = {
         legenda: "Engrenagem aberta: Use your own OAuth credentials marcado e o escopo yt-analytics.readonly no campo.",
       },
     ],
-    renovacao: "A chave de API não vence. O token de renovação (1//…) também não: a Korely pede um token de acesso novo a cada uso, com o seu Client ID e secret.",
+    renovacao: "A chave de API não vence. O token de renovação (1//…) também não: a Central pede um token de acesso novo a cada uso, com o seu Client ID e secret.",
   },
   LINKEDIN: {
     nome: "LinkedIn",
@@ -289,7 +289,7 @@ export const CATALOGO_REDES: Record<RedeConectavel, InfoRede> = {
         texto: "Cole o token ao lado e clique em Testar. Funcionou? Salve.",
       },
     ],
-    renovacao: "Vale 60 dias. O LinkedIn só deixa renovar sozinho para apps parceiros: quando vencer, a Korely avisa aqui e você gera outro no Token Generator (2 minutos).",
+    renovacao: "Vale 60 dias. O LinkedIn só deixa renovar sozinho para apps parceiros: quando vencer, a Central avisa aqui e você gera outro no Token Generator (2 minutos).",
   },
   X: {
     nome: "X",
@@ -403,6 +403,6 @@ export const CATALOGO_REDES: Record<RedeConectavel, InfoRede> = {
         texto: "Token de renovação, Client ID e Client secret ao lado. Clique em Testar. Funcionou? Salve.",
       },
     ],
-    renovacao: "O token de renovação não vence: a Korely troca por um de acesso novo a cada uso, com o seu Client ID e secret. Só cai se você revogar o acesso na conta Google.",
+    renovacao: "O token de renovação não vence: a Central troca por um de acesso novo a cada uso, com o seu Client ID e secret. Só cai se você revogar o acesso na conta Google.",
   },
 };

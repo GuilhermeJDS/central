@@ -3,7 +3,7 @@
  * execucoes_skill com chefe, skill, modelo, tokens, custo, tempo e resultado,
  * com filtros e o total do mês. Filtra sempre pelo accountId da sessão.
  *
- * Custo: execuções na chave do cliente gravam custo 0 para a Korely; aqui o
+ * Custo: execuções na chave do cliente gravam custo 0 para a Central; aqui o
  * custo é ESTIMADO pela tabela de preço do provedor (o que o cliente paga na
  * conta dele). Modelo sem preço na tabela aparece como "—".
  */
