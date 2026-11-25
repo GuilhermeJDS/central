@@ -605,23 +605,8 @@
   color: #ffffff;
   isolation: isolate;
   overflow: hidden;
-  /* Mascote da Central recortado do canto superior direito (estilo pôster): a forma
-     do K é subtraída do card e o fundo da página aparece pelo recorte. */
-  --k-altura: clamp(232px, 29cqi, 312px);
-  --k-direita: -32px;
-  --k-topo: -56px;
-  -webkit-mask-image: url("/central/marca-central.svg"), linear-gradient(#000 0 0);
-  mask-image: url("/central/marca-central.svg"), linear-gradient(#000 0 0);
-  -webkit-mask-size: auto var(--k-altura), 100% 100%;
-  mask-size: auto var(--k-altura), 100% 100%;
-  -webkit-mask-position: right var(--k-direita) top var(--k-topo), 0 0;
-  mask-position: right var(--k-direita) top var(--k-topo), 0 0;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
 }
-/* A sombra fica no envoltório (drop-shadow) para seguir o recorte do K. */
+/* A sombra fica no envoltório (drop-shadow). */
 .cx-norte-moldura {
   filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--norte-sombra, #2f6af7) 20%, transparent)) drop-shadow(0 16px 24px color-mix(in srgb, var(--norte-sombra, #2f6af7) 22%, transparent));
   transition: filter 0.4s var(--cx-mola);

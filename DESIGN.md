@@ -1,5 +1,5 @@
 ---
-name: Korely
+name: Central
 colors:
   # Base (claro)
   mineral: "#F5F4F1"        # fundo da página
@@ -30,9 +30,9 @@ colors:
   chefe-norte: "#1A1A1A"
 ---
 
-# Design System: Korely
+# Design System: Central
 
-Guia visual do painel e do site da Korely. Parte 1–5 descreve **o que o código
+Guia visual da Central (veio do painel onde ela nasceu e segue valendo). Parte 1–5 descreve **o que o código
 tem hoje** (extraído de `src/app/globals.css`, `src/app/layout.tsx` e
 `src/components/ui`). A Parte 6 traz **as regras que valem daqui pra frente**:
 onde o código atual diverge delas, a regra manda e a tela é ajustada quando
@@ -256,8 +256,6 @@ Cada tela tem UMA estrutura própria. O porquê fica escrito aqui.
 | Início | **Card do Norte em 8/4**: à esquerda a ação (gradiente diagonal por estado, ruído fino, título, botões numa linha de base); à direita o K recortado e o retrato do chefe que executa, saindo pela borda de baixo; anel de progresso da semana. Embaixo, a equipe em linha. | A tela existe para uma decisão por vez. O bloco tem peso de pôster e o rosto de quem vai fazer, para a decisão parecer entregue a alguém. |
 | Ficha | **Prontuário**: coluna esquerda fixa com o cartão de identidade (logo, nome, cidade, anel "Ficha X% completa", o que falta) e, à direita, capítulos com edição no lugar (clicar no texto edita); serviços e públicos em etiquetas; "Colar contexto" para a IA distribuir. | É um documento sobre o negócio que todos os chefes leem, não um formulário. Ler primeiro, editar onde está. |
 | Conexões | **Painel de controle**: faixa de estado geral no topo (IA, redes X de 5, última leitura), provedores em blocos com logo, a tabela de modelo por chefe com a coluna dos retratos e escolha em pílula, e as redes em blocos com números. "Como pegar o token" abre o **guia na própria página**: passos numerados (7/12) com o link direto e o espaço do print/vídeo de cada um (`midia` em `CATALOGO_REDES`); à direita (5/12, fixo) o token, Testar (chama a rede, não grava), o status, Salvar e como renova. Aba **API e MCP** (`?aba=api`): à esquerda (7/12) as chaves da conta (nome, começo `kor_ct_…`, escopos em etiqueta, último uso, Revogar com confirmação na própria linha), a chave nova num aviso amarelo que aparece uma vez, o formulário (nome + escopos Ler/Decidir/Pedir) e a lista de ferramentas; à direita (5/12) como conectar: endereço do MCP, comando do Claude Code, JSON e curl, com a chave nova já nos exemplos. | A pergunta da tela é "está tudo ligado?". O estado vem antes do detalhe. |
-| Contratar | **O formulário**: um bloco 8/12 que começa pela pergunta "O que você precisa?" (texto grande), prazo em pílulas e contato numa linha; ao lado (4/12), só quando existem, "Seus pedidos" em lista com a etapa e o botão Pagar. | Pedir tem que ser a coisa mais fácil da tela. Sem vitrine de serviços: o orçamento é feito sob medida no admin (Pedidos → orçamento → checkout Korely). |
-| Projetos | **Loja**: vitrine de produtos (capa 16:10, categoria e versão, nome, o que faz, preço) em 3/2/1 colunas pela largura do contêiner; o detalhe abre na mesma página em 7/5 (galeria com miniaturas, Sobre, linha do tempo de versões; à direita a caixa de compra fixa com preço, Comprar, o que vem junto e requisitos); "Seus projetos" em lista com Baixar e a atualização. | É uma loja: a capa e o preço vendem. Tudo acontece dentro da Central; o checkout da Korely volta para Seus projetos. |
 | Conta (menu do avatar) | **Rodapé da barra lateral** com avatar, nome e e-mail abrindo um menu para cima (Minha conta, Meu plano, Histórico de compras, Configurações, Sair). Minha conta: cartão da foto 4/12 + dados e senha 8/12. Meu plano: o plano é o único bloco cheio em azul (nome, valor/mês, situação) e ao lado a cobrança e o que inclui. Compras: **extrato** agrupado por mês com o total, tipo em etiqueta, valor à direita e o recibo imprimível. | Conta é coisa de quem usa, não do negócio: fica no rodapé, fora da navegação do trabalho. O extrato responde "quanto paguei e por quê" sem abrir nada. |
 | Execuções | **Log com instrumentos**: faixa de métricas com mini-gráficos, gráfico de custo e execuções por dia do mês, tabela densa agrupada por dia com ponto de status, números à direita e saída abrindo no lugar. | É ferramenta de quem desenvolve: densidade e leitura rápida de padrão, não cartões. |
 

@@ -5,6 +5,8 @@ const config: NextConfig = {
   // Fotos da marca e da biblioteca sobem por Server Action.
   experimental: { serverActions: { bodySizeLimit: "6mb" } },
   poweredByHeader: false,
+  // As skills são lidas do disco em tempo de execução: vão junto no deploy (Vercel).
+  outputFileTracingIncludes: { "/**": ["./skills/**/*"] },
   // Permite rodar uma segunda cópia (testes) sem brigar com a pasta .next da principal.
   distDir: process.env.CENTRAL_DIST || ".next",
 };

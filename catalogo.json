@@ -1,0 +1,16 @@
+{
+  "versao": "1.0.0",
+  "novidades": [
+    {
+      "versao": "1.0.0",
+      "data": "25/11/2026",
+      "itens": [
+        "Primeira versão aberta da Central: 7 chefes e 38 skills em português.",
+        "Buffer: peça aprovada com data sai sozinha.",
+        "Contas das redes com cada post aberto e as métricas dele.",
+        "API para o seu agente mandar dados das redes e os números do mês."
+      ]
+    }
+  ],
+  "skills": []
+}
