@@ -1,0 +1,508 @@
+// Fonte do banco. NÃO edite prisma/schema.prisma: ele é gerado deste arquivo
+// por scripts/db.mjs, que troca __PROVEDOR__ por "sqlite" ou "postgresql"
+// conforme a DATABASE_URL (e tira os @db.* no SQLite). Nada de lista
+// (String[]): não existe no SQLite. Dinheiro sempre em centavos (Int).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "__PROVEDOR__"
+}
+
+/// Todas as configurações (Rastro, Buffer, e-mail, geral...).
+/// Valor em JSON; chaves secretas ficam cifradas (AES-256-GCM).
+model Config {
+  chave        String   @id
+  valor        String
+  atualizadoEm DateTime @updatedAt
+}
+
+/// A empresa que a Central toca. Uma instalação, uma empresa (por enquanto).
+model Account {
+  id              String            @id @default(cuid())
+  nome            String
+  email           String?
+  criadaEm        DateTime          @default(now()) @map("criada_em")
+  usuarios        User[]
+  fichaNegocio    FichaNegocio?
+  execucoes       ExecucaoSkill[]
+  entregas        EntregaChefe[]
+  contasConectadas ContaConectada[]
+  chavesIa        ChaveIa[]
+  modelosChefe    ModeloChefe[]
+  chavesConta     ChaveConta[]
+  numerosMes      NumeroMes[]
+
+  @@map("contas")
+}
+
+/// Quem entra na Central.
+model User {
+  id                String       @id @default(cuid())
+  accountId         String       @map("account_id")
+  account           Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  nome              String
+  sobrenome         String?
+  email             String       @unique
+  telefone          String?
+  fotoPerfil        String?      @map("foto_perfil")
+  senhaHash         String       @map("senha_hash")
+  /// Sobe a cada troca de senha: derruba as sessões antigas.
+  versaoSessao      Int          @default(1) @map("versao_sessao")
+  /// claro | escuro (null = segue o sistema).
+  temaPanel         String?      @map("tema_panel")
+  temaEscuro        Boolean      @default(false) @map("tema_escuro")
+  notificacoesEmail Boolean      @default(true) @map("notificacoes_email")
+  createdAt         DateTime     @default(now()) @map("criado_em")
+  tokens            TokenSenha[]
+
+  @@map("usuarios")
+}
+
+/// Link de "esqueci a senha" (só o hash fica guardado).
+model TokenSenha {
+  id        String    @id @default(cuid())
+  usuarioId String    @map("usuario_id")
+  usuario   User      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  hash      String    @unique
+  expiraEm  DateTime  @map("expira_em")
+  usadoEm   DateTime? @map("usado_em")
+
+  @@map("tokens_senha")
+}
+
+/// Números do mês que a pessoa informa (ou o agente dela manda pela API).
+/// O Gerente Rotina, o Conselho e o Negociador Trato leem daqui.
+model NumeroMes {
+  id                String   @id @default(cuid())
+  accountId         String   @map("account_id")
+  account           Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  /// "2026-11"
+  mes               String
+  /// Faturamento do mês, em centavos.
+  receitaCentavos   Int      @default(0) @map("receita_centavos")
+  /// Vendas ou atendimentos concluídos.
+  atendimentos      Int      @default(0)
+  cancelados        Int      @default(0)
+  /// Quem marcou e não apareceu (0 se não se aplica).
+  faltas            Int      @default(0)
+  /// Clientes que compraram no mês.
+  clientesAtivos    Int      @default(0) @map("clientes_ativos")
+  clientesNovos     Int      @default(0) @map("clientes_novos")
+  /// Clientes que pararam de comprar (sem voltar há mais de 60 dias).
+  clientesSumidos   Int      @default(0) @map("clientes_sumidos")
+  /// Dia do mês até onde os números valem (mês em andamento).
+  ateDia            Int      @default(31) @map("ate_dia")
+  atualizadoEm      DateTime @updatedAt @map("atualizado_em")
+
+  @@unique([accountId, mes])
+  @@map("numeros_mes")
+}
+
+/// Imagens e arquivos enviados ou gerados (slides, fotos da marca, avatar).
+/// Ficam no banco para funcionar igual no PC, na VPS e na Vercel, e saem
+/// por /api/uploads/<caminho> (o Buffer precisa de um link público).
+model Arquivo {
+  id        String   @id @default(cuid())
+  /// "estudio/slide-<uuid>.webp" (o que vem depois de /api/uploads/).
+  caminho   String   @unique
+  tipo      String
+  tamanho   Int
+  dados     Bytes
+  criadoEm  DateTime @default(now()) @map("criado_em")
+
+  @@map("arquivos")
+}
+
+/// Skill instalada pela tela Atualizações (o SKILL.md baixado do catálogo).
+/// As que vêm com a Central ficam na pasta skills/.
+model SkillInstalada {
+  slug        String   @id
+  nome        String
+  /// Nome do chefe que usa (ex.: "Editora Pauta").
+  chefe       String
+  descricao   String
+  versao      String
+  conteudo    String
+  origem      String
+  instaladaEm DateTime @default(now()) @map("instalada_em")
+  atualizadaEm DateTime @updatedAt @map("atualizada_em")
+
+  @@map("skills_instaladas")
+}
+
+model FichaNegocio {
+  id            String          @id @default(cuid())
+  accountId     String          @unique @map("account_id")
+  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  nomeNegocio   String          @map("nome_negocio")
+  cidade        String
+  oQueVende     String          @map("o_que_vende") @db.Text
+  paraQuem      String          @map("para_quem") @db.Text
+  objetivo      ObjetivoNegocio
+  objetivoOutro String?         @map("objetivo_outro")
+  /// Link ou @ de cada rede.
+  instagram     String?
+  site          String?
+  google        String?
+  youtube       String?
+  linkedin      String?
+  x             String?
+  /// Exemplos de como o dono escreve.
+  comoFala      String?         @map("como_fala") @db.Text
+  /// Palavras/coisas que o dono não quer de jeito nenhum.
+  naoQuer       String?         @map("nao_quer") @db.Text
+  origem        OrigemFicha     @default(MANUAL)
+  criadaEm      DateTime        @default(now()) @map("criada_em")
+  atualizadaEm  DateTime        @updatedAt @map("atualizada_em")
+
+  @@map("fichas_negocio")
+}
+
+model ExecucaoSkill {
+  id            String          @id @default(cuid())
+  accountId     String          @map("account_id")
+  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  departamento  Departamento
+  /// Ex.: "Editora Pauta".
+  chefe         String
+  /// Ex.: "instagram"; null quando é o próprio chefe/revisor.
+  repositorio   String?
+  /// Ex.: "ig-profile".
+  skill         String?
+  tipo          TipoExecucao
+  execucaoPaiId String?         @map("execucao_pai_id")
+  execucaoPai   ExecucaoSkill?  @relation("ExecucaoArvore", fields: [execucaoPaiId], references: [id])
+  filhas        ExecucaoSkill[] @relation("ExecucaoArvore")
+  entrada       Json
+  /// O "acao" da entrada (ex.: "acaoDaSemana"), em coluna para filtrar igual nos dois bancos.
+  acao          String?
+  saida         String?         @db.Text
+  /// Título curto da decisão (até 8 palavras: o que é e para quem), gerado junto com a saída.
+  titulo        String?         @db.VarChar(120)
+  status        StatusExecucao  @default(NA_FILA)
+  erro          String?
+  modelo        String?
+  tokensEntrada Int             @default(0) @map("tokens_entrada")
+  tokensSaida   Int             @default(0) @map("tokens_saida")
+  /// Custo em milionésimos de dólar (nunca float).
+  custoMicroUsd Int             @default(0) @map("custo_micro_usd")
+  criadaEm      DateTime        @default(now()) @map("criada_em")
+  iniciadaEm    DateTime?       @map("iniciada_em")
+  concluidaEm   DateTime?       @map("concluida_em")
+  decisao       DecisaoExecucao?
+  decididaEm    DateTime?       @map("decidida_em")
+  /// Texto do "Quase?" quando decisao = AJUSTAR.
+  ajuste        String?         @db.Text
+  /// Norte: quem faz a ação aprovada ("korely" | "eu").
+  escolha       String?
+  /// Provedor que rodou (null = execuções antigas: Anthropic com a chave da Korely).
+  provedor      ProvedorIA?
+
+  @@index([accountId, departamento, criadaEm])
+  @@index([status, criadaEm])
+  @@index([accountId, acao])
+  @@map("execucoes_skill")
+}
+
+model EntregaChefe {
+  id               String       @id @default(cuid())
+  accountId        String       @map("account_id")
+  account          Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  departamento     Departamento
+  chefe            String
+  /// A execução SKILL aprovada que originou a peça (uma entrega por decisão).
+  execucaoOrigemId String       @unique @map("execucao_origem_id")
+  /// A execução PRODUCAO que gerou a peça (a última tentativa).
+  execucaoId       String?      @map("execucao_id")
+  /// CARROSSEL | ROTEIRO | POST | THREAD | TITULO | THUMBNAIL | TEXTO
+  tipo             String
+  /// INSTAGRAM | YOUTUBE | X | LINKEDIN | TIKTOK (null = fora das redes).
+  rede             String?
+  titulo           String       @db.VarChar(160)
+  /// NA_FILA | PRODUZINDO | PRONTA | ERRO
+  status           String       @default("PRODUZINDO")
+  /// Etapa atual da produção (LENDO | ESCREVENDO | MONTANDO | SALVANDO).
+  producaoEtapa    String?      @map("producao_etapa")
+  producaoInicio   DateTime?    @map("producao_inicio")
+  /// Passou daqui sem terminar: vira ERRO por tempo limite.
+  producaoPrazo    DateTime?    @map("producao_prazo")
+  /// Peça em texto (roteiro, post, thread, títulos…).
+  texto            String?      @db.Text
+  /// Carrossel: { slides: [{ titulo, texto, imagem, imagemDica }], marca, legenda }.
+  conteudo         Json?
+  erro             String?
+  /// De onde veio o insumo: [{ chefe, titulo, execucaoId }] (departamentos conectados).
+  fontes           Json         @default("[]")
+  /// Estúdio de Redes: EM_REVISAO | APROVADO | PROGRAMADO | PUBLICADO.
+  etapa            String       @default("EM_REVISAO")
+  /// Uma linha sobre a peça (painel lateral do estúdio).
+  descricao        String?      @db.VarChar(400)
+  /// Dia em que a peça sai (Cronograma).
+  programadaPara   DateTime?    @map("programada_para")
+  publicadaEm      DateTime?    @map("publicada_em")
+  /// Buffer: quando a peça foi para a fila, o id dela lá e o último erro.
+  bufferEnviadaEm  DateTime?    @map("buffer_enviada_em")
+  bufferId         String?      @map("buffer_id")
+  bufferErro       String?      @map("buffer_erro")
+  /// Post real vinculado: { rede, id, link, data, texto, capa }.
+  vinculo          Json?
+  /// A versão principal (o conteudo da entrega é sempre o dela).
+  versaoPrincipalId String?     @map("versao_principal_id")
+  versoes          VersaoEntrega[]
+  criadaEm         DateTime     @default(now()) @map("criada_em")
+  atualizadaEm     DateTime     @updatedAt @map("atualizada_em")
+
+  @@index([accountId, departamento, criadaEm])
+  @@index([accountId, programadaPara])
+  @@index([status, producaoPrazo])
+  @@index([etapa, programadaPara])
+  @@map("entregas_chefe")
+}
+
+model VersaoEntrega {
+  id          String              @id @default(cuid())
+  accountId   String              @map("account_id")
+  entregaId   String              @map("entrega_id")
+  entrega     EntregaChefe        @relation(fields: [entregaId], references: [id], onDelete: Cascade)
+  numero      Int
+  /// O que mudou, em poucas palavras.
+  descricao   String              @db.VarChar(160)
+  /// GERACAO | EDICAO
+  origem      String              @default("EDICAO")
+  conteudo    Json?
+  texto       String?             @db.Text
+  comentarios ComentarioVersao[]
+  criadaEm    DateTime            @default(now()) @map("criada_em")
+
+  @@unique([entregaId, numero])
+  @@index([accountId, entregaId])
+  @@map("versoes_entrega")
+}
+
+model ComentarioVersao {
+  id        String        @id @default(cuid())
+  accountId String        @map("account_id")
+  versaoId  String        @map("versao_id")
+  versao    VersaoEntrega @relation(fields: [versaoId], references: [id], onDelete: Cascade)
+  slide     Int
+  x         Float
+  y         Float
+  texto     String        @db.VarChar(1000)
+  autor     String        @db.VarChar(80)
+  resolvido Boolean       @default(false)
+  criadoEm  DateTime      @default(now()) @map("criado_em")
+
+  @@index([accountId, versaoId])
+  @@map("comentarios_versao")
+}
+
+model ContaConectada {
+  id             String     @id @default(cuid())
+  accountId      String     @map("account_id")
+  account        Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  rede           RedeSocial
+  tokenCifrado   String     @map("token_cifrado") @db.Text
+  refreshCifrado String?    @map("refresh_cifrado") @db.Text
+  /// Credenciais do app do cliente (JSON cifrado: clientId/clientSecret do
+  /// Google ou appId/appSecret da Meta) para renovar o token na hora de usar.
+  appCifrado     String?    @map("app_cifrado") @db.Text
+  contaExternaId String     @map("conta_externa_id")
+  nomeExibicao   String     @map("nome_exibicao")
+  expiraEm       DateTime?  @map("expira_em")
+  validaEm       DateTime?  @map("valida_em")
+  criadoEm       DateTime   @default(now()) @map("criado_em")
+
+  @@unique([accountId, rede])
+  @@index([rede, expiraEm])
+  @@map("contas_conectadas")
+}
+
+model ChaveIa {
+  id           String     @id @default(cuid())
+  accountId    String     @map("account_id")
+  account      Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  provedor     ProvedorIA
+  chaveCifrada String     @map("chave_cifrada") @db.Text
+  ultimos4     String
+  modelo       String
+  validaEm     DateTime?  @map("valida_em")
+  criadoEm     DateTime   @default(now()) @map("criado_em")
+
+  @@unique([accountId, provedor])
+  @@map("chaves_ia")
+}
+
+model ModeloChefe {
+  id        String     @id @default(cuid())
+  accountId String     @map("account_id")
+  account   Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  /// Nome do chefe (ex.: "Editora Pauta").
+  chefe     String
+  provedor  ProvedorIA
+  modelo    String
+  criadoEm  DateTime   @default(now()) @map("criado_em")
+
+  @@unique([accountId, chefe])
+  @@map("modelos_chefe")
+}
+
+model ChaveConta {
+  id          String    @id @default(cuid())
+  accountId   String    @map("account_id")
+  account     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  nome        String
+  /// Começo da chave, para reconhecer na lista (ex.: "kor_ct_3f9a2b").
+  prefixo     String
+  hash        String    @unique @map("hash_chave")
+  /// leitura, decisoes, pedidos.
+  escopos     Json      @default("[]")
+  criadoPorId String?   @map("criado_por_id")
+  criadoEm    DateTime  @default(now()) @map("criado_em")
+  ultimoUsoEm DateTime? @map("ultimo_uso_em")
+  revogadaEm  DateTime? @map("revogada_em")
+
+  @@index([accountId])
+  @@map("chaves_conta")
+}
+
+model ImagemMarca {
+  id        String   @id @default(cuid())
+  accountId String   @map("account_id")
+  url       String
+  /// GERADA | ENVIADA
+  origem    String
+  prompt    String?  @db.Text
+  /// OPENAI | GOOGLE (geradas).
+  provedor  String?
+  /// Peça para a qual foi gerada (mantém o personagem entre os slides).
+  entregaId String?  @map("entrega_id")
+  criadaEm  DateTime @default(now()) @map("criada_em")
+
+  @@index([accountId, criadaEm])
+  @@index([accountId, entregaId])
+  @@map("imagens_marca")
+}
+
+model IdentidadeMarca {
+  id             String   @id @default(cuid())
+  accountId      String   @unique @map("account_id")
+  /// Como as imagens devem parecer (luz, enquadramento, paleta, tipo de foto).
+  estilo         String   @default("") @db.Text
+  /// Quem aparece nas imagens (sempre a mesma pessoa).
+  personagem     String   @default("") @db.Text
+  /// OPENAI | GOOGLE (null = a primeira chave de imagem validada).
+  provedorImagem String?  @map("provedor_imagem")
+  /// Imagem de referência do personagem (biblioteca).
+  referenciaUrl  String?  @map("referencia_url")
+  corFundo       String?  @map("cor_fundo")
+  corTexto       String?  @map("cor_texto")
+  corDestaque    String?  @map("cor_destaque")
+  fonte          String?
+  atualizadaEm   DateTime @updatedAt @map("atualizada_em")
+
+  @@map("identidades_marca")
+}
+
+model ReferenciaRede {
+  id        String   @id @default(cuid())
+  accountId String   @map("account_id")
+  /// INSTAGRAM | YOUTUBE | X | LINKEDIN | TIKTOK (null = qualquer rede)
+  rede      String?
+  link      String?
+  imagem    String?
+  /// O que copiar da ideia (gancho, formato, capa…).
+  nota      String   @db.Text
+  criadaEm  DateTime @default(now()) @map("criada_em")
+
+  @@index([accountId, criadaEm])
+  @@map("referencias_rede")
+}
+
+model ItemListaNegra {
+  id                   String         @id @default(cuid())
+  termo                String
+  tipo                 TipoListaNegra @default(PALAVRA)
+  substituicaoSugerida String?        @map("substituicao_sugerida")
+  motivo               String?
+  ativo                Boolean        @default(true)
+  agenteNome           String?        @map("agente_nome")
+  criadoEm             DateTime       @default(now()) @map("criado_em")
+  atualizadoEm         DateTime       @updatedAt @map("atualizado_em")
+
+  @@unique([tipo, termo])
+  @@index([ativo])
+  @@map("lista_negra")
+}
+
+enum Departamento {
+  DIRETORIA
+  PRESENCA
+  REDES
+  VENDAS
+  ESTRATEGIA
+  OPERACAO
+  BASTIDOR
+}
+
+enum TipoExecucao {
+  CHEFE
+  SKILL
+  REVISOR
+  /// Decisão aprovada virando peça pronta (Entregas).
+  PRODUCAO
+}
+
+enum StatusExecucao {
+  NA_FILA
+  RODANDO
+  CONCLUIDA
+  ERRO
+  RECUSADA
+}
+
+enum DecisaoExecucao {
+  PENDENTE
+  APROVADA
+  PASSADA
+  AJUSTAR
+}
+
+enum ProvedorIA {
+  ANTHROPIC
+  OPENAI
+  GOOGLE
+  DEEPSEEK
+  XAI
+  OPENROUTER
+}
+
+enum RedeSocial {
+  INSTAGRAM
+  YOUTUBE
+  LINKEDIN
+  X
+  GOOGLE_EMPRESA
+}
+
+enum ObjetivoNegocio {
+  MAIS_CLIENTES
+  MAIS_VENDAS
+  ORGANIZAR
+  OUTRO
+}
+
+enum OrigemFicha {
+  MANUAL
+  RASTRO
+}
+
+enum TipoListaNegra {
+  PALAVRA
+  FRASE
+  REGEX
+  REGRA_COPY
+}

@@ -1,0 +1,37 @@
+/* Base mínima. O visual da Central mora em src/app/central/*.css (prefixo cx-). */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; min-height: 100%; }
+body {
+  font-family: var(--font-source-sans), "Source Sans 3", system-ui, sans-serif;
+  background: #f6f4ef;
+  color: #17171a;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #0e0f12; color: #f2f2f3; }
+}
+img, svg, video { max-width: 100%; }
+button, input, select, textarea { font: inherit; }
+
+/* Cor de cada chefe (tema claro). O escuro está em app/central/central.css. */
+[data-chefe="rastro"] { --chefe: #0b6b63; }
+[data-chefe="pauta"] { --chefe: #9b2c6b; }
+[data-chefe="trato"] { --chefe: #9a4a06; }
+[data-chefe="conselho"] { --chefe: #3a3f9a; }
+[data-chefe="rotina"] { --chefe: #1d6b34; }
+[data-chefe="norte"] { --chefe: #1a1a1a; }
+[data-chefe="revisor"] { --chefe: #8c2f39; }
+
+/* Mascote (open-bot-avatar): o SVG estático vem do servidor; o vivo monta por cima. */
+.cx-mascote { position: relative; display: inline-grid; place-items: center; flex-shrink: 0; line-height: 0; }
+.cx-mascote > * { grid-area: 1 / 1; width: 100%; height: 100%; }
+.cx-mascote svg { display: block; width: 100%; height: 100%; }
+
+.cx-logo-central { display: inline-flex; align-items: center; gap: 9px; color: inherit; }
+.cx-logo-central-nome {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}

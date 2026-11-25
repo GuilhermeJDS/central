@@ -1,0 +1,20 @@
+{
+  "name": "garimpo-rastro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rastro — serviço de busca do Google Maps",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "playwright": "1.63.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3"
+  }
+}

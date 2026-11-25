@@ -1,0 +1,89 @@
+/* Guia "Como pegar o token" (Conexões → Redes): abre na própria página,
+   embaixo dos blocos. Passos numerados 7/12 com link e espaço do print;
+   à direita (5/12, fixo ao rolar) o token, Testar, status e a renovação. */
+
+.cx-guia-abrir { border: 0; background: none; padding: 0; cursor: pointer; align-self: flex-start; min-height: 44px; }
+
+.cx-guia {
+  container-type: inline-size;
+  margin-top: var(--cx-e-3);
+  background: var(--cx-card);
+  border-radius: var(--cx-raio);
+  box-shadow: var(--cx-sombra-alta);
+  scroll-margin-top: var(--cx-e-3);
+  outline: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cx-guia { animation: cx-guia-entra 260ms var(--cx-mola) both; }
+}
+@keyframes cx-guia-entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.cx-guia-cabeca { display: flex; align-items: flex-start; gap: var(--cx-e-2); padding: var(--cx-e-3) var(--cx-e-4); border-bottom: 1px solid var(--cx-linha); }
+.cx-guia-cabeca .cx-rede-logo { flex: none; }
+.cx-guia-cabeca-texto { flex: 1; min-width: 0; }
+.cx-guia-titulo { font-family: var(--cx-f-titulo); font-weight: 800; font-size: var(--cx-t-2); line-height: 1.15; letter-spacing: -0.02em; }
+
+.cx-guia-corpo { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--cx-goteira); padding: var(--cx-e-4); align-items: start; }
+.cx-guia-passos { grid-column: span 7; display: flex; flex-direction: column; counter-reset: passo; }
+.cx-guia-form { grid-column: span 5; position: sticky; top: var(--cx-e-3); display: flex; flex-direction: column; gap: var(--cx-e-2); padding: var(--cx-e-3); border-radius: 14px; background: var(--cx-suave); }
+@container (max-width: 860px) {
+  .cx-guia-passos, .cx-guia-form { grid-column: 1 / -1; position: static; }
+}
+
+.cx-guia-passo { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: var(--cx-e-2); position: relative; padding-bottom: var(--cx-e-3); }
+.cx-guia-passo:not(:last-child)::before { content: ""; position: absolute; left: 15px; top: 36px; bottom: 4px; width: 2px; background: var(--cx-linha); }
+.cx-guia-num {
+  position: relative; z-index: 1;
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--cx-tinta); color: var(--cx-sobre-tinta); font-weight: 700; font-size: 15px;
+}
+.cx-guia-passo-texto { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 4px; }
+.cx-guia-passo-titulo { font-weight: 700; font-size: 16px; color: var(--cx-tinta); }
+.cx-guia-passo-desc { color: var(--cx-tinta-2); font-size: 15px; overflow-wrap: anywhere; }
+.cx-guia-link {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 4px;
+  min-height: 40px; margin-top: 2px; padding: 0 12px; border-radius: 10px;
+  background: var(--cx-azul-suave); color: var(--cx-azul-escuro);
+  font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.cx-guia-link:hover { background: color-mix(in srgb, var(--cx-azul) 16%, var(--cx-card)); }
+.cx-guia-figura { grid-column: 2; max-width: 560px; margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cx-guia-midia-link { display: block; border-radius: 10px; }
+.cx-guia-midia-link:focus-visible { outline: 2px solid var(--cx-azul); outline-offset: 2px; }
+.cx-guia-midia {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; border-radius: 10px;
+  object-fit: cover; object-position: top left; background: var(--cx-suave);
+  border: 1px solid var(--cx-borda);
+}
+.cx-guia-midia-link:hover .cx-guia-midia { border-color: var(--cx-azul); }
+.cx-guia-legenda { font-size: 13px; line-height: 1.35; color: var(--cx-tinta-3); }
+@container (max-width: 640px) {
+  .cx-guia-cabeca, .cx-guia-corpo { padding: var(--cx-e-2); }
+  .cx-guia-form { padding: var(--cx-e-2); }
+}
+
+.cx-guia-status { display: flex; align-items: center; gap: var(--cx-e-1); font-weight: 600; font-size: 15px; color: var(--cx-tinta-2); overflow-wrap: anywhere; }
+.cx-guia-status-ponto { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--cx-tinta-3); }
+.cx-guia-status[data-estado="ok"] { color: var(--cx-verde); }
+.cx-guia-status[data-estado="ok"] .cx-guia-status-ponto { background: var(--cx-verde); }
+.cx-guia-status[data-estado="vence"] { color: var(--cx-amarelo); }
+.cx-guia-status[data-estado="vence"] .cx-guia-status-ponto { background: var(--cx-laranja); }
+.cx-guia-status[data-estado="caiu"] { color: var(--cx-vermelho); }
+.cx-guia-status[data-estado="caiu"] .cx-guia-status-ponto { background: var(--cx-vermelho); }
+.cx-guia-form .cx-input { background: var(--cx-card); }
+.cx-guia-token { font-family: var(--font-geist-mono, ui-monospace), monospace; font-size: 15px; }
+.cx-guia-opcional summary { cursor: pointer; font-weight: 600; font-size: 15px; color: var(--cx-tinta-2); min-height: 44px; display: flex; align-items: center; }
+.cx-guia-opcional-campos { display: flex; flex-direction: column; gap: var(--cx-e-2); padding-top: var(--cx-e-1); }
+.cx-guia-botoes { display: flex; gap: var(--cx-e-1); flex-wrap: wrap; }
+.cx-guia-botoes .cx-botao { flex: 1; }
+.cx-guia-botoes .cx-botao--suave { background: var(--cx-card); }
+.cx-guia-resultado { display: flex; gap: 6px; align-items: flex-start; font-size: 15px; font-weight: 600; padding: 10px 12px; border-radius: 10px; overflow-wrap: anywhere; }
+.cx-guia-resultado svg { flex: none; margin-top: 2px; }
+.cx-guia-resultado--ok { background: var(--cx-verde-suave); color: var(--cx-verde); }
+.cx-guia-resultado--erro { background: var(--cx-vermelho-suave); color: var(--cx-vermelho); }
+.cx-guia-renova { display: flex; gap: var(--cx-e-1); align-items: flex-start; padding-top: var(--cx-e-2); border-top: 1px solid var(--cx-linha); color: var(--cx-tinta-2); font-size: 14px; }
+.cx-guia-renova svg { flex: none; margin-top: 2px; color: var(--cx-tinta-3); }
+.cx-guia-renova strong { color: var(--cx-tinta); }
+.cx-guia-opcional summary { list-style: none; gap: 8px; }
+.cx-guia-opcional summary::-webkit-details-marker { display: none; }
+.cx-guia-opcional summary::before { content: "+"; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--cx-card); font-weight: 700; }
+.cx-guia-opcional[open] summary::before { content: "−"; }

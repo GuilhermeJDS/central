@@ -1,0 +1,114 @@
+{
+  "central": {
+    "version": 1,
+    "id": "central",
+    "name": "Central",
+    "body": {
+      "path": "M22 33Q22 25 30 25H70Q78 25 78 33V78Q78 86 70 86H30Q22 86 22 78ZM47.5 26V17H52.5V26ZM45 13A5 5 0 1 1 55 13A5 5 0 1 1 45 13Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 56,
+      "spacing": 21,
+      "scale": 1.25
+    }
+  },
+  "rastro": {
+    "version": 1,
+    "id": "rastro",
+    "name": "Inspetor Rastro",
+    "body": {
+      "path": "M50 91C40 78 19 63 19 42A31 31 0 0 1 81 42C81 63 60 78 50 91Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 42,
+      "spacing": 19,
+      "scale": 1.15
+    }
+  },
+  "pauta": {
+    "version": 1,
+    "id": "pauta",
+    "name": "Editora Pauta",
+    "body": {
+      "path": "M24 16H76Q86 16 86 26V58Q86 68 76 68H48L30 85V68H24Q14 68 14 58V26Q14 16 24 16Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 42,
+      "spacing": 21,
+      "scale": 1.2
+    }
+  },
+  "trato": {
+    "version": 1,
+    "id": "trato",
+    "name": "Negociador Trato",
+    "body": {
+      "path": "M12 50L35 21H80Q89 21 89 30V70Q89 79 80 79H35ZM27 50A4.5 4.5 0 1 0 36 50A4.5 4.5 0 1 0 27 50Z"
+    },
+    "eyes": {
+      "x": 62,
+      "y": 50,
+      "spacing": 19,
+      "scale": 1.15
+    }
+  },
+  "conselho": {
+    "version": 1,
+    "id": "conselho",
+    "name": "Conselho",
+    "body": {
+      "path": "M24 32L29 12L43 26H57L71 12L76 32Q85 46 83 63Q79 88 50 89Q21 88 17 63Q15 46 24 32Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 50,
+      "spacing": 23,
+      "scale": 1.35
+    }
+  },
+  "rotina": {
+    "version": 1,
+    "id": "rotina",
+    "name": "Gerente Rotina",
+    "body": {
+      "path": "M18 27Q18 20 25 20H75Q82 20 82 27V80Q82 87 75 87H25Q18 87 18 80ZM31 11H40V27H31ZM60 11H69V27H60Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 55,
+      "spacing": 21,
+      "scale": 1.2
+    }
+  },
+  "norte": {
+    "version": 1,
+    "id": "norte",
+    "name": "Norte",
+    "body": {
+      "path": "M18 58A32 32 0 1 1 82 58A32 32 0 1 1 18 58ZM41.5 31L50 9L58.5 31Z"
+    },
+    "eyes": {
+      "x": 50,
+      "y": 59,
+      "spacing": 20,
+      "scale": 1.2
+    }
+  },
+  "revisor": {
+    "version": 1,
+    "id": "revisor",
+    "name": "Revisor",
+    "body": {
+      "path": "M13 41A28 28 0 1 1 69 41A28 28 0 1 1 13 41ZM57 66L66 57L89 80Q92 85 87 89Q83 92 79 88Z"
+    },
+    "eyes": {
+      "x": 41,
+      "y": 41,
+      "spacing": 18,
+      "scale": 1.15
+    }
+  }
+}

@@ -1,0 +1,21 @@
+# docker compose up -d  → Central em http://localhost:3000
+# Antes: rode `npm run setup` uma vez (gera o .env com os tokens) ou copie .env.example para .env.
+services:
+  sistema:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-file:./dados/central.db}
+      RASTRO_URL: http://rastro:4310
+    ports: ["3000:3000"]
+    volumes: ["dados:/app/dados"]
+    restart: unless-stopped
+  rastro:
+    build: ./servicos/rastro
+    environment:
+      RASTRO_TOKEN: ${RASTRO_TOKEN}
+    volumes: ["rastro:/app/.local"]
+    restart: unless-stopped
+volumes:
+  dados:
+  rastro:
