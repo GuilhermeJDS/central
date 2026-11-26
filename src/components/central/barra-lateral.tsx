@@ -26,6 +26,7 @@ export function BarraLateral({
   detalhe,
   pendentes,
   novidades = 0,
+  iaLigada = false,
   usuario,
 }: {
   tema: "claro" | "escuro";
@@ -34,6 +35,8 @@ export function BarraLateral({
   pendentes: number;
   /** Itens novos em Atualizações (versão, projetos, skills). */
   novidades?: number;
+  /** A chave de IA está conectada (os chefes podem trabalhar). */
+  iaLigada?: boolean;
   /** Quem está logado: rodapé com avatar e o menu da conta. */
   usuario: UsuarioMenu;
 }) {
@@ -81,10 +84,12 @@ export function BarraLateral({
   const ativo = (href: string) => (href === "/central" ? caminho === "/central" : caminho.startsWith(href));
   const desenho = (i: Item["icone"]): ReactNode =>
     typeof i === "string" ? (
-      <Icone nome={i} />
+      <span className="cx-nav-icone">
+        <Icone nome={i} tamanho={18} />
+      </span>
     ) : (
       <span data-chefe={i.chefe} className="cx-nav-chefe">
-        <SimboloCx id={i.chefe} tamanho={20} />
+        <SimboloCx id={i.chefe} tamanho={18} />
       </span>
     );
 
@@ -93,6 +98,7 @@ export function BarraLateral({
       <div className="cx-lateral-topo">
         <Link href="/central" className="cx-logo" aria-label="Central · Início">
           <LogoCentral />
+          <span className="cx-logo-sub">empresa no automático</span>
         </Link>
         <div className="cx-lateral-topo-acoes">
           <TemaBotao inicial={tema} />
@@ -117,10 +123,21 @@ export function BarraLateral({
           if ((e.target as HTMLElement).closest("a")) setAberto(false);
         }}
       >
-        <div className="cx-negocio">
+        <Link href={iaLigada ? "/central/ficha" : "/central/conexoes"} className="cx-negocio" data-ia={iaLigada ? "ligada" : "desligada"}>
           <span className="cx-negocio-nome">{nomeNegocio}</span>
           <span className="cx-negocio-detalhe">{detalhe}</span>
-        </div>
+          <span className="cx-negocio-status">
+            <span className="cx-negocio-equipe" aria-hidden="true">
+              {(["rastro", "pauta", "trato", "conselho", "rotina", "norte"] as const).map((id) => (
+                <span key={id} data-chefe={id} className="cx-negocio-membro">
+                  <SimboloCx id={id} tamanho={12} />
+                </span>
+              ))}
+            </span>
+            <span className="cx-negocio-ponto" aria-hidden="true" />
+            {iaLigada ? "Equipe trabalhando" : "Conecte a IA"}
+          </span>
+        </Link>
 
         <nav aria-label="Central" className="cx-nav">
           {grupos.map((g, i) => (
@@ -129,7 +146,7 @@ export function BarraLateral({
               <ul>
                 {g.itens.map((it) => (
                   <li key={it.href}>
-                    <Link href={it.href} className="cx-nav-item" aria-current={ativo(it.href) ? "page" : undefined}>
+                    <Link href={it.href} className="cx-nav-item" data-chefe={typeof it.icone === "string" ? undefined : it.icone.chefe} aria-current={ativo(it.href) ? "page" : undefined}>
                       {desenho(it.icone)}
                       <span>{it.rotulo}</span>
                       {it.contador ? (

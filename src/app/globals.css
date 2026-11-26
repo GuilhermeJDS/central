@@ -36,31 +36,71 @@ button, input, select, textarea { font: inherit; }
   line-height: 1;
 }
 
-/* ---------- Hachura premium (mesma do Garimpo): listras finas a 135°, que somem do canto. */
-:root { --hachura: rgba(15, 20, 25, 0.075); }
-@media (prefers-color-scheme: dark) { :root { --hachura: rgba(255, 255, 255, 0.07); } }
-.central[data-tema="escuro"] { --hachura: rgba(255, 255, 255, 0.07); }
-.central[data-tema="claro"] { --hachura: rgba(15, 20, 25, 0.075); }
-.cx-lateral, .cx-painel, .ac-lado, .ac-membro, .cx-chefe-card, .cx-cabeca { position: relative; isolation: isolate; }
-.cx-lateral::before, .cx-painel::before, .ac-lado::before, .cx-chefe-card::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
-  background-image: repeating-linear-gradient(135deg, var(--hachura) 0 1px, transparent 1px 7px);
+/* ---------- Hachura premium (a do Garimpo, refinada).
+   Listras finas a 135°, mais fortes no canto superior direito e sumindo.
+   - todo cartão tem; nos departamentos a listra pega a cor do chefe;
+   - no hover a hachura acende um pouco;
+   - a área principal e a sidebar têm uma faixa hachurada no topo com brilho. */
+:root { --hachura: rgba(15, 20, 25, 0.075); --hachura-forte: rgba(15, 20, 25, 0.12); }
+@media (prefers-color-scheme: dark) { :root { --hachura: rgba(255, 255, 255, 0.065); --hachura-forte: rgba(255, 255, 255, 0.11); } }
+.central[data-tema="claro"] { --hachura: rgba(15, 20, 25, 0.075); --hachura-forte: rgba(15, 20, 25, 0.12); }
+.central[data-tema="escuro"] { --hachura: rgba(255, 255, 255, 0.065); --hachura-forte: rgba(255, 255, 255, 0.11); }
+
+.cx-painel, .cx-chefe-card, .cx-card, .cx-cardapio-card, .cx-carta, .ac-membro, .ac-miolo, .cx-pedagio-lista li, .cx-lista-at > li {
+  position: relative;
+  isolation: isolate;
+}
+.cx-painel::before, .cx-chefe-card::before, .cx-card::before, .cx-cardapio-card::before, .cx-carta::before, .ac-membro::before, .ac-miolo::before,
+.cx-pedagio-lista li::before, .cx-lista-at > li::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(135deg, var(--listra, var(--hachura)) 0 1px, transparent 1px 7px);
   -webkit-mask-image: radial-gradient(130% 95% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.35) 45%, transparent 75%);
   mask-image: radial-gradient(130% 95% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.35) 45%, transparent 75%);
+  transition: opacity 200ms ease-out;
+  opacity: 0.9;
 }
-/* Alterna: um painel sim, outro não, para não cansar. */
-.cx-painel:nth-of-type(even)::before { display: none; }
-.cx-lateral::before { -webkit-mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.25) 60%, transparent); mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.25) 60%, transparent); }
-.ac-lado::before { -webkit-mask-image: radial-gradient(90% 70% at 100% 0%, #000, transparent 75%); mask-image: radial-gradient(90% 70% at 100% 0%, #000, transparent 75%); }
+/* A listra na cor do chefe, quando o cartão é de um chefe. */
+[data-chefe] .cx-painel, .cx-painel[data-chefe], .cx-chefe-card[data-chefe], [data-chefe].cx-card {
+  --listra: color-mix(in srgb, var(--chefe, currentColor) 16%, transparent);
+}
+@media (hover: hover) {
+  .cx-chefe-card:hover::before, .cx-card:hover::before, .cx-cardapio-card:hover::before, .cx-lista-at > li:hover::before, a.cx-painel:hover::before { opacity: 1; --hachura: var(--hachura-forte); }
+}
+/* Borda fina, como a caixa do Garimpo. */
+.cx-painel, .cx-chefe-card, .cx-card { box-shadow: var(--cx-sombra), inset 0 0 0 1px color-mix(in srgb, currentColor 6%, transparent); }
 
-/* Sidebar premium: superfície com borda fina, item ativo em cartão com hachura. */
-.cx-lateral { box-shadow: inset -1px 0 0 var(--cx-linha, rgba(0,0,0,0.06)); }
-.cx-nav-item[aria-current="page"] { position: relative; isolation: isolate; box-shadow: 0 1px 2px rgba(0,0,0,0.06), inset 0 0 0 1px var(--cx-linha, rgba(0,0,0,0.06)); }
+/* Faixa do topo: brilho + hachura que some para baixo (área principal e sidebar). */
+.cx-principal::before, .cx-lateral::before, .cx-ob::before, .ac-lado::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 340px;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60% 100% at 85% 0%, color-mix(in srgb, #2f6af7 10%, transparent), transparent 70%),
+    repeating-linear-gradient(135deg, var(--hachura) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.25) 70%, transparent);
+  mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.25) 70%, transparent);
+}
+.cx-lateral::before { height: 260px; }
+.ac-lado { position: relative; isolation: isolate; }
+.ac-lado::before { height: 100%; z-index: -1; }
+.cx-lateral { position: sticky; isolation: isolate; box-shadow: inset -1px 0 0 color-mix(in srgb, currentColor 8%, transparent); }
+.cx-lateral > * { position: relative; z-index: 1; }
+
+/* Item ativo da sidebar: cartão com borda e hachura curta. */
+.cx-nav-item[aria-current="page"] { position: relative; isolation: isolate; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px color-mix(in srgb, currentColor 10%, transparent); }
 .cx-nav-item[aria-current="page"]::after {
   content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
   background-image: repeating-linear-gradient(135deg, var(--hachura) 0 1px, transparent 1px 6px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000); mask-image: linear-gradient(90deg, transparent 30%, #000);
 }
-.cx-nav-rotulo { letter-spacing: 0.12em; }
 
 /* Cabeçalho novo: sem traço, sem nome em azul e sem ponto. A seção vira um selo. */
 .cx-traco, .cx-ponto { display: none !important; }
@@ -73,3 +113,71 @@ button, input, select, textarea { font: inherit; }
   box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 14%, transparent);
 }
 .cx-titulo { font-weight: 700 !important; letter-spacing: -0.045em !important; }
+
+/* Login: o lado do formulário inteiro com hachura que desce do topo; cards da equipe alternando. */
+.ac-miolo { position: relative; padding: 36px 28px !important; border-radius: 24px; background: color-mix(in srgb, var(--ac-superficie) 72%, transparent); border: 1px solid var(--ac-linha); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 24px 60px -30px rgba(15,20,25,0.35); backdrop-filter: blur(6px); flex: 0 1 auto !important; margin-block: auto !important; }
+
+/* Cartão do Norte (azul): hachura branca saindo do canto, por baixo do conteúdo. */
+.cx-norte { --listra-norte: rgba(255, 255, 255, 0.1); }
+.cx-norte::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background-image: repeating-linear-gradient(135deg, var(--listra-norte) 0 1px, transparent 1px 8px);
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 0%, #000, rgba(0, 0, 0, 0.3) 50%, transparent 80%);
+  mask-image: radial-gradient(90% 90% at 100% 0%, #000, rgba(0, 0, 0, 0.3) 50%, transparent 80%);
+}
+
+/* ---------- Sidebar premium (no padrão do Garimpo, um passo além). */
+.cx-lateral {
+  background:
+    radial-gradient(120% 40% at 0% 0%, color-mix(in srgb, #2f6af7 9%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--cx-card), var(--cx-lateral) 55%) !important;
+}
+.cx-logo { flex-direction: column; align-items: flex-start !important; gap: 2px; text-decoration: none; color: var(--cx-tinta); }
+.cx-logo-sub { white-space: nowrap; padding-left: 39px; font-size: 11px; font-weight: 600; color: var(--cx-tinta-3); letter-spacing: 0.01em; }
+
+/* Cartão da empresa com o status da equipe. */
+.cx-negocio {
+  margin: 0 4px; padding: 12px 14px !important; border-radius: 14px; text-decoration: none;
+  background: color-mix(in srgb, var(--cx-card) 82%, transparent);
+  box-shadow: var(--cx-sombra), inset 0 0 0 1px color-mix(in srgb, currentColor 7%, transparent);
+  position: relative; isolation: isolate; transition: box-shadow 160ms ease-out, transform 160ms ease-out;
+}
+.cx-negocio::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background-image: repeating-linear-gradient(135deg, var(--hachura) 0 1px, transparent 1px 6px);
+  -webkit-mask-image: radial-gradient(120% 100% at 100% 0%, #000, transparent 75%); mask-image: radial-gradient(120% 100% at 100% 0%, #000, transparent 75%);
+}
+@media (hover: hover) { .cx-negocio:hover { transform: translateY(-1px); box-shadow: var(--cx-sombra-alta); } }
+.cx-negocio-status { display: flex; align-items: center; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, currentColor 8%, transparent); font-size: 12px; font-weight: 600; color: var(--cx-tinta-2); }
+.cx-negocio-equipe { display: inline-flex; margin-right: 2px; }
+.cx-negocio-membro { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 6px; margin-left: -3px; color: var(--chefe); background: color-mix(in srgb, var(--chefe) 14%, var(--cx-card)); box-shadow: 0 0 0 1.5px var(--cx-card); }
+.cx-negocio-membro:first-child { margin-left: 0; }
+.cx-negocio-ponto { width: 7px; height: 7px; border-radius: 50%; background: #22a55a; box-shadow: 0 0 0 3px color-mix(in srgb, #22a55a 22%, transparent); }
+.cx-negocio[data-ia="desligada"] .cx-negocio-ponto { background: #e3ad35; box-shadow: 0 0 0 3px color-mix(in srgb, #e3ad35 25%, transparent); }
+
+/* Rótulo do grupo com a linha que some. */
+.cx-nav-rotulo { display: flex !important; align-items: center; gap: 8px; font-size: 10.5px !important; letter-spacing: 0.1em !important; }
+.cx-nav-rotulo::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, color-mix(in srgb, currentColor 22%, transparent), transparent); }
+
+/* Item: ícone num quadradinho; ativo vira cartão com barra de cor. */
+.cx-nav-item { min-height: 42px !important; gap: 11px !important; padding: 0 10px 0 8px !important; position: relative; }
+.cx-nav-icone, .cx-nav-chefe {
+  display: grid !important; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 9px;
+  color: var(--cx-tinta-3); transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.cx-nav-chefe { color: var(--chefe); background: color-mix(in srgb, var(--chefe) 10%, transparent); }
+@media (hover: hover) { .cx-nav-item:hover .cx-nav-icone { color: var(--cx-tinta); } .cx-nav-item:hover .cx-nav-icone, .cx-nav-item:hover .cx-nav-chefe { transform: scale(1.06); } }
+.cx-nav-item[aria-current="page"] .cx-nav-icone { background: var(--cx-tinta); color: var(--cx-card); }
+.cx-nav-item[aria-current="page"] .cx-nav-chefe { background: var(--chefe); color: #fff; }
+.central[data-tema="escuro"] .cx-nav-item[aria-current="page"] .cx-nav-chefe { color: #111; }
+.cx-nav-item[aria-current="page"]::before {
+  content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0;
+  background: var(--chefe, var(--cx-azul, #2f6af7));
+}
+.cx-nav-item:not([data-chefe])[aria-current="page"]::before { background: var(--cx-azul, #2f6af7); }
+
+/* Rodapé: o cartão da pessoa. */
+.cx-conta-botao {
+  border-radius: 14px !important; background: color-mix(in srgb, var(--cx-card) 82%, transparent) !important;
+  box-shadow: var(--cx-sombra), inset 0 0 0 1px color-mix(in srgb, currentColor 7%, transparent) !important;
+}

@@ -57,7 +57,7 @@ export default async function LayoutCentral({ children }: { children: ReactNode 
 
   return (
     <div className={`${fontes} cx`} data-tema={tema}>
-      <BarraLateral tema={tema} nomeNegocio={c.nomeNegocio} detalhe={detalhe} pendentes={pendentes} novidades={novidades} usuario={usuario} />
+      <BarraLateral tema={tema} nomeNegocio={c.nomeNegocio} detalhe={detalhe} pendentes={pendentes} novidades={novidades} iaLigada={podeGerar} usuario={usuario} />
       <main className="cx-principal">
         <div className="cx-fundo" aria-hidden="true" />
         <div className="cx-conteudo">
