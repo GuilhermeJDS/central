@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CopiarTexto } from "@/components/central/copiar";
+import { enderecoPublico } from "@/lib/config";
 import { BotaoAguardar } from "./botao-aguardar";
 import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia } from "./acoes";
 
@@ -21,7 +23,7 @@ function resposta(raw: string): {pedido:string;texto:string} | null {
 const caixa = {background:"var(--cx-papel, white)", border:"1px solid #d8dfe8", borderRadius:16, padding:20};
 const campo = {display:"block", width:"100%", margin:"8px 0", padding:10};
 export default async function Espacos() {
-  const dados = await dadosEspacos();
+  const [dados, base] = await Promise.all([dadosEspacos(), enderecoPublico()]);
   return <div style={{maxWidth:1050,margin:"0 auto",padding:"20px 0 60px"}}>
     <p>ÁREAS DE TRABALHO</p><h1>Seus projetos</h1>
     <p>Cada área guarda seu contexto e responde pedidos próprios. Os departamentos da Central continuam usando a ficha principal.</p>
@@ -78,6 +80,7 @@ export default async function Espacos() {
             {lead.compartilhamento ? <div style={{marginTop:12}}>
               <p>Link público válido até {new Date(lead.compartilhamento.expiraEm).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"})}. Quem tiver o link poderá abrir a demonstração.</p>
               <p><a href={`/proposta/${lead.compartilhamento.token}`} target="_blank" rel="noreferrer">Abrir demonstração compartilhável</a></p>
+              <CopiarTexto texto={`${base}/proposta/${lead.compartilhamento.token}`} rotulo="Copiar link" />
               <form action={revogarLinkPrevia}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Revogar link" aguardando="Revogando…" /></form>
             </div> : null}
           </section> : null}
