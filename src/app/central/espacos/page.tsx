@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CopiarTexto } from "@/components/central/copiar";
 import { enderecoPublico } from "@/lib/config";
 import { BotaoAguardar } from "./botao-aguardar";
-import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia, registrarOportunidade } from "./acoes";
+import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia, excluirRascunhoPrevia, registrarOportunidade } from "./acoes";
 
 const areas = [
   { id:"engenharia", titulo:"Lumina Engenharia", texto:"Projetos e serviços de engenharia." },
@@ -91,6 +91,8 @@ export default async function Espacos() {
             {lead.rascunhoSite.servicos.length ? <ul>{lead.rascunhoSite.servicos.map((s,i)=><li key={i}>{s}</li>)}</ul> : <p>Serviços aguardam confirmação.</p>}
             <p>{lead.rascunhoSite.chamada}</p><p>Confira os dados antes de usar esta prévia.</p>
             <Link href={`/central/espacos/previa/${lead.id}`} className="cx-botao cx-botao--azul">Visualizar página</Link>
+            <form action={excluirRascunhoPrevia} style={{marginTop:12}}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Excluir rascunho" aguardando="Excluindo…" /></form>
+            <p>Excluir o rascunho também revoga seu link público, se existir.</p>
             <form action={criarLinkPrevia} style={{marginTop:12}}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal={lead.compartilhamento ? "Gerar novo link" : "Criar link para compartilhar"} aguardando="Criando link…" /></form>
             {lead.compartilhamento ? <div style={{marginTop:12}}>
               <p>Link público válido até {new Date(lead.compartilhamento.expiraEm).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"})}. Quem tiver o link poderá abrir a demonstração.</p>
