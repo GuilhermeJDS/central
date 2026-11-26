@@ -177,3 +177,23 @@ export async function revogarLinkPrevia(form: FormData) {
   ]);
   revalidatePath("/central/espacos");
 }
+
+/** Registra uma pesquisa com suas fontes, sem enviar contato. */
+export async function registrarOportunidade(form: FormData) {
+  const {accountId} = await contaCentral();
+  const texto = (k:string, max:number) => String(form.get(k) ?? "").trim().slice(0,max);
+  const nome = texto("nome",150), cidade = texto("cidade",150), evidencia = texto("evidencia",2000);
+  if (nome.length < 2 || cidade.length < 2 || evidencia.length < 10) throw new Error("Nome, cidade e evidência são necessários.");
+  const enderecoUrl = (s:string) => {
+    if (!s) return null;
+    try { const u = new URL(s); return ["https:","http:"].includes(u.protocol) ? u.href : null; } catch { return null; }
+  };
+  const site = enderecoUrl(texto("site",500)), maps = enderecoUrl(texto("maps",1000));
+  const responsavel = texto("responsavel",150), contato = texto("contato",300);
+  const id = createHash("sha256").update((nome+"|"+cidade).toLocaleLowerCase("pt-BR")).digest("hex").slice(0,32);
+  const lead:Lead = { id, nome, endereco:cidade, site, maps, categoria:texto("categoria",100) || null, criado:new Date().toISOString(), status:"qualificando", responsavel, contato, evidencia };
+  const k = chave(accountId, "lead." + id);
+  try { await prisma.config.create({data:{chave:k,valor:JSON.stringify(lead)}}); }
+  catch(e) { if (!(e && typeof e === "object" && "code" in e && e.code === "P2002")) throw e; }
+  revalidatePath("/central/espacos");
+}
