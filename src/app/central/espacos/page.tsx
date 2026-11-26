@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { CopiarTexto } from "@/components/central/copiar";
+import { enderecoPublico } from "@/lib/config";
 import { BotaoAguardar } from "./botao-aguardar";
-import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia } from "./acoes";
+import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia } from "./acoes";
 
 const areas = [
   { id:"engenharia", titulo:"Lumina Engenharia", texto:"Projetos e serviços de engenharia." },
@@ -21,7 +23,7 @@ function resposta(raw: string): {pedido:string;texto:string} | null {
 const caixa = {background:"var(--cx-papel, white)", border:"1px solid #d8dfe8", borderRadius:16, padding:20};
 const campo = {display:"block", width:"100%", margin:"8px 0", padding:10};
 export default async function Espacos() {
-  const dados = await dadosEspacos();
+  const [dados, base] = await Promise.all([dadosEspacos(), enderecoPublico()]);
   return <div style={{maxWidth:1050,margin:"0 auto",padding:"20px 0 60px"}}>
     <p>ÁREAS DE TRABALHO</p><h1>Seus projetos</h1>
     <p>Cada área guarda seu contexto e responde pedidos próprios. Os departamentos da Central continuam usando a ficha principal.</p>
@@ -74,6 +76,13 @@ export default async function Espacos() {
             {lead.rascunhoSite.servicos.length ? <ul>{lead.rascunhoSite.servicos.map((s,i)=><li key={i}>{s}</li>)}</ul> : <p>Serviços aguardam confirmação.</p>}
             <p>{lead.rascunhoSite.chamada}</p><p>Confira os dados antes de usar esta prévia.</p>
             <Link href={`/central/espacos/previa/${lead.id}`} className="cx-botao cx-botao--azul">Visualizar página</Link>
+            <form action={criarLinkPrevia} style={{marginTop:12}}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal={lead.compartilhamento ? "Gerar novo link" : "Criar link para compartilhar"} aguardando="Criando link…" /></form>
+            {lead.compartilhamento ? <div style={{marginTop:12}}>
+              <p>Link público válido até {new Date(lead.compartilhamento.expiraEm).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"})}. Quem tiver o link poderá abrir a demonstração.</p>
+              <p><a href={`/proposta/${lead.compartilhamento.token}`} target="_blank" rel="noreferrer">Abrir demonstração compartilhável</a></p>
+              <CopiarTexto texto={`${base}/proposta/${lead.compartilhamento.token}`} rotulo="Copiar link" />
+              <form action={revogarLinkPrevia}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Revogar link" aguardando="Revogando…" /></form>
+            </div> : null}
           </section> : null}
           {lead.mensagem ? <div><strong>Rascunho para revisão</strong><p style={{whiteSpace:"pre-wrap"}}>{lead.mensagem}</p></div> : null}
           <form action={rascunharContato}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Preparar mensagem" aguardando="Preparando mensagem…" /></form>

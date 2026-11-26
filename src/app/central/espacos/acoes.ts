@@ -1,6 +1,6 @@
 "use server";
 
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { contaCentral, contaCentralLeitura, contaCentralGeracao } from "@/app/central/_lib/sessao";
@@ -11,7 +11,7 @@ import { criarExecucao, marcarRodando, concluirExecucao, falharExecucao } from "
 
 const ESPACOS = { engenharia: "Lumina Engenharia", ofertas: "Lumina Ofertas", sites: "Sites para clínicas" } as const;
 type Espaco = keyof typeof ESPACOS;
-type Lead = { id: string; nome: string; endereco: string | null; site: string | null; maps: string | null; categoria: string | null; criado: string; mensagem?: string; status?: string; responsavel?: string; contato?: string; evidencia?: string; previa?: string; rascunhoSite?: { titulo: string; apresentacao: string; servicos: string[]; chamada: string } };
+type Lead = { id: string; nome: string; endereco: string | null; site: string | null; maps: string | null; categoria: string | null; criado: string; mensagem?: string; status?: string; responsavel?: string; contato?: string; evidencia?: string; previa?: string; compartilhamento?: { token: string; expiraEm: string }; rascunhoSite?: { titulo: string; apresentacao: string; servicos: string[]; chamada: string } };
 const validar = (v: string): v is Espaco => Object.hasOwn(ESPACOS, v);
 const prefixo = (conta: string) => `espacos.${conta}.`;
 const chave = (conta: string, parte: string) => prefixo(conta) + parte;
@@ -142,5 +142,38 @@ export async function prepararPrevia(form: FormData) {
     await falharExecucao(accountId, ex.id, e instanceof Error ? e.message : "Erro ao gerar prévia").catch(() => {});
     throw e;
   }
+  revalidatePath("/central/espacos");
+}
+
+export async function criarLinkPrevia(form: FormData) {
+  const { accountId } = await contaCentral();
+  const id = String(form.get("id") ?? "");
+  const lead = await lerLead(accountId, id);
+  if (!lead.rascunhoSite) throw new Error("Crie o rascunho antes de compartilhar.");
+  const token = randomBytes(32).toString("base64url");
+  const hash = createHash("sha256").update(token).digest("hex");
+  const expiraEm = new Date(Date.now() + 7 * 86400000).toISOString();
+  const snapshot = { nome:lead.nome, categoria:lead.categoria, endereco:lead.endereco, rascunhoSite:lead.rascunhoSite, expiraEm };
+  const atual = { ...lead, compartilhamento: { token, expiraEm } };
+  const k = chave(accountId, "lead." + id);
+  const antigo = lead.compartilhamento?.token;
+  await prisma.$transaction([
+    ...(antigo ? [prisma.config.deleteMany({where:{chave:"previa.publica."+createHash("sha256").update(antigo).digest("hex")}})] : []),
+    prisma.config.create({data:{chave:"previa.publica."+hash, valor:JSON.stringify(snapshot)}}),
+    prisma.config.update({where:{chave:k},data:{valor:JSON.stringify(atual)}}),
+  ]);
+  revalidatePath("/central/espacos");
+}
+export async function revogarLinkPrevia(form: FormData) {
+  const { accountId } = await contaCentral();
+  const id = String(form.get("id") ?? "");
+  const lead = await lerLead(accountId, id);
+  const token = lead.compartilhamento?.token;
+  if (!token) return;
+  const { compartilhamento: _ignorado, ...atual } = lead;
+  await prisma.$transaction([
+    prisma.config.deleteMany({where:{chave:"previa.publica."+createHash("sha256").update(token).digest("hex")}}),
+    prisma.config.update({where:{chave:chave(accountId,"lead."+id)},data:{valor:JSON.stringify(atual)}}),
+  ]);
   revalidatePath("/central/espacos");
 }
