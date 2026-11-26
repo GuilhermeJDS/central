@@ -48,7 +48,8 @@ export default async function LayoutCentral({ children }: { children: ReactNode 
     email: eu?.email ?? session?.user?.email ?? "",
     foto: eu?.fotoPerfil ?? null,
   };
-  const pendentes = decisoes.dado.filter((d: { estado: string }) => d.estado === "pendente").length;
+  // Exemplo não conta: conta nova começa com zero esperando.
+  const pendentes = decisoes.exemplo ? 0 : decisoes.dado.filter((d: { estado: string }) => d.estado === "pendente").length;
   const detalhe = c.accountId
     ? c.cidade || "Sua conta"
     : c.travado

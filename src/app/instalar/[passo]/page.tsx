@@ -110,7 +110,7 @@ async function PassoIa({ aviso, contaId, feito }: { aviso: ReturnType<typeof ler
         sub="Cole a chave de IA (Claude, GPT, Gemini, DeepSeek, Grok ou OpenRouter): é ela que paga o trabalho dos chefes, direto no provedor, sem ninguém no meio. Se quiser, já conecte as redes."
         estado={feito ? "done" : "idle"}
       />
-      <ConteudoConexoes contaId={contaId} aviso={aviso} />
+      <ConteudoConexoes contaId={contaId} aviso={aviso} comPublicacao={false} />
     </>
   );
 }

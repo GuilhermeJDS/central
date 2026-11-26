@@ -826,3 +826,24 @@ a.cx-rack-botao--cheio:hover { background: var(--cx-azul-escuro); }
 .cx-cfg-pessoas li:last-child { border-bottom: 0; }
 .cx-cfg-perigo { color: var(--cx-alerta, #b3261e) !important; }
 .cx-exp-corpo .cx-integracao-topo > div { display: none; }
+.cx-con-publicacao { display: flex; flex-direction: column; gap: 14px; }
+
+/* Início de conta nova: primeiros passos. */
+.cx-pi-inicio { display: flex; flex-direction: column; gap: 16px; }
+.cx-pi-topo { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; padding: 26px 28px !important; }
+.cx-pi-topo-texto { flex: 1 1 320px; display: flex; flex-direction: column; gap: 6px; }
+.cx-pi-contagem { margin: 0; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cx-azul, #2f6af7); }
+.cx-pi-titulo { margin: 0; font: 800 clamp(26px, 3vw, 34px)/1.05 var(--cx-f-titulo); letter-spacing: -0.03em; color: var(--cx-tinta); }
+.cx-pi-barra { height: 8px; border-radius: 999px; background: var(--cx-suave); overflow: hidden; margin-top: 8px; max-width: 420px; }
+.cx-pi-barra span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2f6af7, #22a55a); transition: width 400ms ease; }
+.cx-pi-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.cx-pi-passo { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 16px 20px !important; }
+.cx-pi-passo[data-feito] { opacity: 0.72; }
+.cx-pi-num { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 50%; font-weight: 800; font-size: 14px; background: var(--cx-suave); color: var(--cx-tinta-2); }
+.cx-pi-passo[data-feito] .cx-pi-num { background: #22a55a; color: #fff; }
+.cx-pi-passo-texto { flex: 1 1 260px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cx-pi-passo-texto strong { font: 800 17px var(--cx-f-titulo); color: var(--cx-tinta); }
+.cx-pi-passo-texto span { color: var(--cx-tinta-2); font-size: 15px; }
+.cx-pi-opcional { margin-left: 8px; font: 700 11px var(--cx-f-texto); text-transform: uppercase; letter-spacing: 0.06em; color: var(--cx-tinta-3); vertical-align: 2px; }
+.cx-pi-exemplo { align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; color: var(--cx-tinta-2); font-weight: 600; text-decoration: none; }
+.cx-pi-exemplo:hover { background: var(--cx-suave); color: var(--cx-tinta); }

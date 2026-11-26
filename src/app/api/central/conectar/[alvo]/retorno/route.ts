@@ -28,32 +28,32 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   if (q.get("error")) {
     const cancelou = /denied|cancel/i.test(`${q.get("error")} ${q.get("error_reason") ?? ""}`);
-    return voltar({ ok: false, mensagem: cancelou ? `${nome}: a autorização foi cancelada. Nada foi conectado.` : `${nome} recusou a autorização. Tente de novo.` });
+    return voltar({ ok: false, mensagem: cancelou ? `${nome}: a autorização foi cancelada. Nada foi conectado.` : `${nome} recusou a autorização. Tente de novo.` }, request);
   }
 
   const e = lerEstado(request.cookies.get(COOKIE_OAUTH)?.value);
   const codigo = q.get("code");
   if (!e || e.alvo !== alvo || q.get("state") !== e.estado || !codigo)
-    return voltar({ ok: false, mensagem: `${nome}: a conexão expirou ou veio de outra aba. Clique em Conectar de novo.` });
+    return voltar({ ok: false, mensagem: `${nome}: a conexão expirou ou veio de outra aba. Clique em Conectar de novo.` }, request);
 
   const dono = await donoDaSessao();
   if ("erro" in dono || dono.accountId !== e.accountId)
-    return voltar({ ok: false, mensagem: "A sessão mudou no meio da conexão. Entre de novo e conecte." });
+    return voltar({ ok: false, mensagem: "A sessão mudou no meio da conexão. Entre de novo e conecte." }, request);
 
   try {
     if (e.alvo === "openrouter") {
       const chave = await trocarCodigoOpenRouter(e, codigo);
       const r = await conectarOpenRouter(dono.accountId, chave);
       revalidatePath("/central", "layout");
-      return voltar(r);
+      return voltar(r, request);
     }
     const rede = REDE_DO_ALVO[e.alvo];
     const tokens = await trocarCodigoRede(e, codigo);
     const r = await conectarRedeOAuth(dono.accountId, rede, tokens);
     if (r.ok) revalidatePath("/central", "layout");
-    return voltar(r);
+    return voltar(r, request);
   } catch (err) {
     const msg = err instanceof ErroRede || (err instanceof Error && e.alvo === "openrouter") ? err.message : `${nome}: não deu para conectar agora. Tente de novo em instantes.`;
-    return voltar({ ok: false, mensagem: msg });
+    return voltar({ ok: false, mensagem: msg }, request);
   }
 }

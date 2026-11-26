@@ -56,25 +56,27 @@ export function redesComOAuth(): RedeConectavel[] {
   return (Object.keys(REDE_DO_ALVO) as Array<keyof typeof REDE_DO_ALVO>).filter(oauthLigado).map((a) => REDE_DO_ALVO[a]);
 }
 
+/** Endereço fixo do .env (sem requisição). Nas rotas, use enderecoPublico(request). */
 export function baseApp(): string {
   // OAUTH_BASE_URL: só para testar o retorno em outro endereço (ex.: http://localhost:3001).
   return (process.env.OAUTH_BASE_URL || process.env.APP_URL || "http://localhost:3000").replace(/\/+$/, "");
 }
 
-export function uriRetorno(alvo: AlvoOAuth): string {
-  return `${baseApp()}/api/central/conectar/${alvo}/retorno`;
+export function uriRetorno(alvo: AlvoOAuth, base: string = baseApp()): string {
+  return `${base.replace(/\/+$/, "")}/api/central/conectar/${alvo}/retorno`;
 }
 
 // ---------------------------------------------------------------------------
 // Estado + PKCE
 // ---------------------------------------------------------------------------
 
-export type EstadoOAuth = { estado: string; verificador: string; alvo: AlvoOAuth; accountId: string; em: number };
+/** `base`: o endereço da Central nesta conexão (a ida e a volta usam o mesmo). */
+export type EstadoOAuth = { estado: string; verificador: string; alvo: AlvoOAuth; accountId: string; em: number; base: string };
 
 const b64url = (b: Buffer) => b.toString("base64url");
 
-export function novoEstado(alvo: AlvoOAuth, accountId: string): EstadoOAuth {
-  return { estado: b64url(randomBytes(24)), verificador: b64url(randomBytes(48)), alvo, accountId, em: Date.now() };
+export function novoEstado(alvo: AlvoOAuth, accountId: string, base: string): EstadoOAuth {
+  return { estado: b64url(randomBytes(24)), verificador: b64url(randomBytes(48)), alvo, accountId, em: Date.now(), base: base.replace(/\/+$/, "") };
 }
 
 function desafio(verificador: string): string {
@@ -90,7 +92,7 @@ const ESCOPOS_GOOGLE: Record<"youtube" | "google-empresa", string> = {
 export function urlAutorizacao(e: EstadoOAuth): string {
   const app = appDo(e.alvo);
   if (!app) throw new Error("app não configurado");
-  const retorno = uriRetorno(e.alvo);
+  const retorno = uriRetorno(e.alvo, e.base);
   let u: URL;
   switch (e.alvo) {
     case "youtube":
@@ -174,7 +176,7 @@ export async function trocarCodigoRede(e: EstadoOAuth, codigo: string): Promise<
   const rede = REDE_DO_ALVO[e.alvo];
   const app = appDo(e.alvo);
   if (!app) throw new ErroRede(rede, "entrada", "a conexão automática não está ligada agora. Use o colar token.");
-  const retorno = uriRetorno(e.alvo);
+  const retorno = uriRetorno(e.alvo, e.base);
 
   switch (e.alvo) {
     case "youtube":

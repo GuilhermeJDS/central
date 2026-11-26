@@ -1,4 +1,9 @@
 import { PlugZap } from "lucide-react";
+import Link from "next/link";
+
+import { FormIntegracao } from "@/components/central/form-integracao";
+import { grupo } from "@/lib/catalogo-integracoes";
+import { resumoIntegracoes } from "@/lib/config";
 
 import { PainelConexoes } from "@/components/central/painel-conexoes";
 import { auth } from "@/lib/auth";
@@ -21,7 +26,8 @@ import {
 import { apagarRedeCentralAcao, conectarRedeCentralAcao, testarRedeCentralAcao } from "../acoes-conexoes-redes";
 
 /** Miolo de "IA e redes": a página de Conexões e o passo 2 do onboarding usam. */
-export async function ConteudoConexoes({ contaId, aviso }: { contaId: string | null; aviso: ReturnType<typeof lerAviso> }) {
+export async function ConteudoConexoes({ contaId, aviso, comPublicacao = true }: { contaId: string | null; aviso: ReturnType<typeof lerAviso>; comPublicacao?: boolean }) {
+  const resumo = comPublicacao ? await resumoIntegracoes() : null;
   const [chaves, modelos, conexoesRedes, session] = await Promise.all([
     contaId ? listarChaves(contaId) : Promise.resolve([]),
     contaId ? listarModelosChefe(contaId) : Promise.resolve([]),
@@ -57,7 +63,22 @@ export async function ConteudoConexoes({ contaId, aviso }: { contaId: string | n
             testarRede: testarRedeCentralAcao,
           }}
         />
-      ) : (
+      ) : null}
+      {contaId && resumo ? (
+        <section className="cx-con-publicacao" aria-labelledby="cx-con-publicacao-t">
+          <div className="cx-con-secao-cabeca">
+            <h2 id="cx-con-publicacao-t" className="cx-con-secao-titulo">
+              Publicação
+            </h2>
+            <p className="cx-con-secao-apoio">
+              Pulou no começo? Ligue o Buffer aqui: peça aprovada e com data no Cronograma sai sozinha. Rastro e e-mail ficam em{" "}
+              <Link href="/central/configuracoes">Configurações</Link>.
+            </p>
+          </div>
+          <FormIntegracao grupo="buffer" provedor={grupo("buffer").provedores[0]} resumo={resumo.buffer?.provedores.buffer} />
+        </section>
+      ) : null}
+      {contaId ? null : (
         <div className="cx-painel cx-vazio-conexoes">
           <span className="cx-pilha-vazia-icone cx-vazio-conexoes-icone" aria-hidden="true">
             <PlugZap size={28} strokeWidth={1.8} />

@@ -9,7 +9,8 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { cifrar, decifrar } from "@/lib/ia/cofre";
-import { baseApp, ehAlvoOAuth, type EstadoOAuth } from "@/lib/redes/oauth";
+import { enderecoPublico } from "@/lib/config";
+import { ehAlvoOAuth, type EstadoOAuth } from "@/lib/redes/oauth";
 
 export const COOKIE_OAUTH = "central_oauth";
 export const VALIDADE_ESTADO_MS = 10 * 60_000;
@@ -27,7 +28,7 @@ export async function donoDaSessao(): Promise<{ accountId: string } | { erro: "l
 export function gravarEstado(res: NextResponse, e: EstadoOAuth): void {
   res.cookies.set(COOKIE_OAUTH, cifrar(JSON.stringify(e)), {
     httpOnly: true,
-    secure: baseApp().startsWith("https://"),
+    secure: e.base.startsWith("https://"),
     // lax: o cookie volta no redirecionamento GET vindo da plataforma.
     sameSite: "lax",
     path: "/api/central/conectar",
@@ -39,7 +40,7 @@ export function lerEstado(bruto: string | undefined): EstadoOAuth | null {
   if (!bruto) return null;
   try {
     const e = JSON.parse(decifrar(bruto)) as EstadoOAuth;
-    if (!e || !ehAlvoOAuth(e.alvo) || typeof e.estado !== "string" || typeof e.verificador !== "string") return null;
+    if (!e || !ehAlvoOAuth(e.alvo) || typeof e.estado !== "string" || typeof e.verificador !== "string" || typeof e.base !== "string") return null;
     if (typeof e.em !== "number" || Date.now() - e.em > VALIDADE_ESTADO_MS) return null;
     return e;
   } catch {
@@ -50,8 +51,8 @@ export function lerEstado(bruto: string | undefined): EstadoOAuth | null {
 export type AvisoConexao = { ok: boolean; mensagem: string };
 
 /** De volta para Conexões com o aviso cifrado em ?r= (a página decifra). */
-export function voltar(aviso: AvisoConexao): NextResponse {
-  const u = new URL(`${baseApp()}/central/conexoes`);
+export async function voltar(aviso: AvisoConexao, request?: Request): Promise<NextResponse> {
+  const u = new URL(`${await enderecoPublico(request)}/central/conexoes`);
   u.searchParams.set("r", cifrar(JSON.stringify({ ...aviso, em: Date.now() })));
   const res = NextResponse.redirect(u.toString(), 303);
   res.cookies.delete({ name: COOKIE_OAUTH, path: "/api/central/conectar" });
