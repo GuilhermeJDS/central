@@ -1,6 +1,5 @@
-import { CabecaPagina } from "@/components/central/cabeca";
-import { Mascote } from "@/components/central/mascote";
 import { ListaPedagio, type ItemPedagio } from "@/components/central/projeto-aberto/pedagio";
+import { Policial } from "@/components/central/projeto-aberto/policial";
 
 export const metadata = { title: "Pedágio" };
 
@@ -17,14 +16,21 @@ const ITENS: ItemPedagio[] = [
   { id: "grupo", titulo: "Entrar na comunidade do X", texto: "O grupo no WhatsApp de quem constrói em público.", acao: "Entrar", link: "https://chat.whatsapp.com/GBKvnYBUEaaBqsJtzibh4r?s=cl&p=i&iam=2" },
 ];
 
+/** O guarda do pedágio em pontilhado, a placa PARE e o cartão com os 4 itens por cima. */
 export default function Pedagio() {
   return (
-    <>
-      <CabecaPagina secao="Projeto aberto" titulo="Pedágio" subtitulo="A Central é aberta e grátis para sempre. O pedágio não custa nada e ajuda quem faz e quem está começando." />
-      <section className="cx-painel cx-pedagio" data-chefe="norte">
-        <Mascote id="norte" tamanho={120} estado="waiting" />
+    <section className="cx-painel cx-pedagio-palco">
+      <div className="cx-pedagio-chao" aria-hidden="true" />
+      <div className="cx-pedagio-guarda">
+        <Policial className="cx-pedagio-policial" />
+        <span className="cx-pedagio-pare">Pare</span>
+      </div>
+      <div className="cx-pedagio-cartao">
+        <p className="cx-sobrelinha">Pedágio</p>
+        <h1 className="cx-pedagio-titulo">Aqui ninguém passa sem pagar o pedágio.</h1>
+        <p className="cx-pedagio-texto">A Central é aberta e grátis para sempre. O pedágio é outro: não custa nada e ajuda quem faz e quem está começando.</p>
         <ListaPedagio itens={ITENS} />
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

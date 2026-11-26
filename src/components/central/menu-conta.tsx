@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, CreditCard, LogOut, ReceiptText, Settings, UserRound } from "lucide-react";
+import { ChevronsUpDown, LogOut, Settings, UserRound } from "lucide-react";
 import Link from "next/link";
 import { sair } from "@/acoes/acesso";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
@@ -25,9 +25,7 @@ export function Avatar({ u, tamanho = 36 }: { u: UsuarioMenu; tamanho?: number }
 
 const ITENS = [
   { href: "/central/conta", rotulo: "Minha conta", icone: UserRound },
-  { href: "/central/conta/plano", rotulo: "Meu plano", icone: CreditCard },
-  { href: "/central/conta/compras", rotulo: "Histórico de compras", icone: ReceiptText },
-  { href: "/central/conta/configuracoes", rotulo: "Configurações", icone: Settings },
+  { href: "/central/configuracoes", rotulo: "Configurações", icone: Settings },
 ] as const;
 
 /**

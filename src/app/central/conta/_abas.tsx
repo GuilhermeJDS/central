@@ -2,12 +2,10 @@ import Link from "next/link";
 
 const ABAS = [
   { href: "/central/conta", rotulo: "Minha conta" },
-  { href: "/central/conta/plano", rotulo: "Plano" },
-  { href: "/central/conta/compras", rotulo: "Compras" },
-  { href: "/central/conta/configuracoes", rotulo: "Configurações" },
+  { href: "/central/configuracoes", rotulo: "Configurações" },
 ] as const;
 
-/** Abas da conta (as mesmas quatro entradas do menu do avatar). */
+/** Abas da conta (as mesmas entradas do menu do avatar). */
 export function AbasConta({ atual }: { atual: (typeof ABAS)[number]["href"] }) {
   return (
     <nav className="cx-segmentos cx-abas-conta" aria-label="Conta">

@@ -104,6 +104,7 @@ export function BarraLateral({
       itens: [
         { href: "/central/ficha", rotulo: "Ficha", icone: "ficha" },
         { href: "/central/conexoes", rotulo: "Conexões", icone: "conexoes" },
+        { href: "/central/configuracoes", rotulo: "Configurações", icone: "configuracoes" },
         { href: "/central/skills", rotulo: "Skills", icone: "skills" },
         { href: "/central/execucoes", rotulo: "Execuções", icone: "execucoes" },
       ],
