@@ -178,6 +178,21 @@ export async function revogarLinkPrevia(form: FormData) {
   revalidatePath("/central/espacos");
 }
 
+
+/** Exclui o rascunho e desativa seu link, preservando os dados da oportunidade. */
+export async function excluirRascunhoPrevia(form: FormData) {
+  const { accountId } = await contaCentral();
+  const id = String(form.get("id") ?? "");
+  const lead = await lerLead(accountId, id);
+  const token = lead.compartilhamento?.token;
+  const { rascunhoSite: _rascunho, compartilhamento: _compartilhamento, ...atual } = lead;
+  await prisma.$transaction([
+    ...(token ? [prisma.config.deleteMany({ where: { chave: "previa.publica." + createHash("sha256").update(token).digest("hex") } })] : []),
+    prisma.config.update({ where: { chave: chave(accountId, "lead." + id) }, data: { valor: JSON.stringify(atual) } }),
+  ]);
+  revalidatePath("/central/espacos");
+}
+
 /** Registra uma pesquisa com suas fontes, sem enviar contato. */
 export async function registrarOportunidade(form: FormData) {
   const {accountId} = await contaCentral();
