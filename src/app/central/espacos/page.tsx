@@ -1,4 +1,4 @@
-import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco } from "./acoes";
+import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia } from "./acoes";
 
 const areas = [
   { id:"engenharia", titulo:"Lumina Engenharia", texto:"Projetos e serviços de engenharia." },
@@ -65,6 +65,13 @@ export default async function Espacos() {
             <button type="submit" className="cx-botao cx-botao--azul">Salvar acompanhamento</button>
           </form>
           {linkSeguro(lead.previa) ? <p><a href={linkSeguro(lead.previa)!} target="_blank" rel="noopener noreferrer">Abrir prévia</a></p> : null}
+          <form action={prepararPrevia} style={{marginTop:16}}><input type="hidden" name="id" value={lead.id}/><button className="cx-botao cx-botao--azul" type="submit">Criar rascunho de página</button></form>
+          {lead.rascunhoSite ? <section style={{margin:"16px 0",padding:20,border:"1px solid #d8dfe8",borderRadius:12}}>
+            <p>PRÉVIA DE CONTEÚDO · AINDA NÃO PUBLICADA</p>
+            <h3>{lead.rascunhoSite.titulo}</h3><p>{lead.rascunhoSite.apresentacao}</p>
+            {lead.rascunhoSite.servicos.length ? <ul>{lead.rascunhoSite.servicos.map((s,i)=><li key={i}>{s}</li>)}</ul> : <p>Serviços aguardam confirmação.</p>}
+            <p>{lead.rascunhoSite.chamada}</p><p>Confira os dados antes de usar esta prévia.</p>
+          </section> : null}
           {lead.mensagem ? <div><strong>Rascunho para revisão</strong><p style={{whiteSpace:"pre-wrap"}}>{lead.mensagem}</p></div> : null}
           <form action={rascunharContato}><input type="hidden" name="id" value={lead.id}/><button className="cx-botao cx-botao--azul" type="submit">Preparar mensagem</button></form>
         </article>)}
