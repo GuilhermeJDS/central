@@ -119,7 +119,7 @@ export async function rascunharContato(form: FormData) {
 }
 const SITE_SCHEMA = z.object({
   titulo: z.string().trim().min(1).max(140),
-  apresentacao: z.string().trim().min(1).max(600),
+  apresentacao: z.string().trim().min(1).max(4000),
   servicos: z.array(z.string().trim().min(1).max(100)).max(6),
   chamada: z.string().trim().min(1).max(150)
 });
@@ -132,7 +132,7 @@ export async function prepararPrevia(form: FormData) {
   try {
     await marcarRodando(accountId, ex.id);
     const r = await chamarModelo(accountId,
-      'Crie um rascunho de texto para uma página de apresentação em português. Use apenas dados fornecidos; nunca invente nome de profissional, endereço, serviços, preços, depoimentos, registros, especialidades, resultados ou credenciais. A lista servicos pode ficar vazia se não houver confirmação. Não inclua números ou promessas não informados. Responda somente JSON com titulo, apresentacao, servicos (array de textos curtos) e chamada.',
+      'Crie um rascunho de texto para uma página de apresentação em português. Use apenas dados fornecidos; nunca invente nome de profissional, endereço, serviços, preços, depoimentos, registros, especialidades, resultados ou credenciais. A lista servicos pode ficar vazia se não houver confirmação. Não inclua números ou promessas não informados. Use titulo de até 140 caracteres, apresentacao de até 600 caracteres, até 6 servicos de até 100 caracteres e chamada de até 150 caracteres. Responda somente JSON com titulo, apresentacao, servicos (array de textos curtos) e chamada.',
       `Contexto do serviço: ${contexto || "Criação de sites para clínicas."}\nDados públicos e observações ainda sujeitos a confirmação: ${JSON.stringify({nome:lead.nome,categoria:lead.categoria,endereco:lead.endereco,evidencia:lead.evidencia})}`,
       {maxTokens: 4000, timeoutMs: 90000, chefe:"Trato"});
     const rascunhoSite = SITE_SCHEMA.parse(extrairJson(r.texto));
