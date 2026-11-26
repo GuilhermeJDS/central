@@ -21,7 +21,7 @@ export default async function PreviaClinica({ params }: { params: Promise<{id:st
       <span className={styles.rotulo}>Apresentação da clínica</span>
     </header>
     <section className={styles.hero}>
-      <div><span className={styles.rotulo}>Vitória da Conquista</span><h1>{site.titulo}</h1><p>{site.apresentacao}</p></div>
+      <div><span className={styles.rotulo}>{lead.categoria || "Clínica"}</span><h1>{site.titulo}</h1><p>{site.apresentacao}</p></div>
       <div className={styles.cartao} aria-hidden="true">Cuidado e presença</div>
     </section>
     <section className={styles.conteudo}>
