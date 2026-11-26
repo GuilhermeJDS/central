@@ -24,6 +24,10 @@ const caixa = {background:"var(--cx-papel, white)", border:"1px solid #d8dfe8", 
 const campo = {display:"block", width:"100%", margin:"8px 0", padding:10};
 export default async function Espacos() {
   const [dados, base] = await Promise.all([dadosEspacos(), enderecoPublico()]);
+  const ativos = dados.leads.filter(l => !["fechado", "descartado"].includes(l.status || "pesquisado"));
+  const emContato = ativos.filter(l => ["contatado", "negociacao"].includes(l.status || ""));
+  const pendentes = ativos.filter(l => !l.responsavel?.trim() || !l.contato?.trim());
+  const fechados = dados.leads.filter(l => l.status === "fechado");
   return <div style={{maxWidth:1050,margin:"0 auto",padding:"20px 0 60px"}}>
     <p>ÁREAS DE TRABALHO</p><h1>Seus projetos</h1>
     <p>Cada área guarda seu contexto e responde pedidos próprios. Os departamentos da Central continuam usando a ficha principal.</p>
@@ -48,6 +52,23 @@ export default async function Espacos() {
     </div>
     <section style={caixa}>
       <h2>Prospecção de clínicas</h2>
+      <div aria-label="Resumo da prospecção" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,margin:"16px 0"}}>
+        {[["Oportunidades ativas",ativos.length],["Contato ou negociação",emContato.length],["Falta identificar contato",pendentes.length],["Fechados",fechados.length]].map(([rotulo,total]) =>
+          <div key={rotulo} style={{padding:14,border:"1px solid #d8dfe8",borderRadius:10}}><strong style={{fontSize:24}}>{total}</strong><div>{rotulo}</div></div>)}
+      </div>
+      {ativos.length > 0 ? <section aria-label="Próximos passos" style={{padding:16,margin:"16px 0",border:"1px solid #d8dfe8",borderRadius:12}}>
+        <h3>Próximos passos</h3>
+        <p>Sugestões baseadas no estágio e nas informações salvas em cada oportunidade.</p>
+        <ul>{ativos.slice(0,8).map(lead => {
+          const acao = !lead.responsavel?.trim() ? "Identificar o responsável" :
+            !lead.contato?.trim() ? "Confirmar contato profissional direto" :
+            lead.status === "negociacao" ? "Acompanhar a negociação" :
+            lead.status === "contatado" ? "Acompanhar resposta" :
+            lead.status === "previa" ? "Revisar a prévia antes de compartilhar" :
+            lead.status === "pronto" ? "Revisar a abordagem" : "Avaliar oportunidade e próximo passo";
+          return <li key={lead.id}><a href={"#oportunidade-" + lead.id}>{lead.nome}</a> — {acao}</li>;
+        })}</ul>
+      </section> : null}
       <p>Pesquise um estabelecimento pelo Rastro e acompanhe sua análise. A busca pode levar mais de um minuto.</p>
       <form action={pesquisarClinica} style={{display:"flex",gap:10,flexWrap:"wrap",margin:"16px 0"}}>
         <label>Nome ou busca <input name="nome" required minLength={2} maxLength={150} placeholder="Ex.: clínica de estética" style={{display:"block",padding:10}}/></label>
@@ -71,7 +92,7 @@ export default async function Espacos() {
         </form>
       </details>
       {dados.leads.length === 0 ? <p>Nenhuma pesquisa salva ainda.</p> : <div>
-        {dados.leads.map(lead => <article key={lead.id} style={{borderTop:"1px solid #d8dfe8",padding:"16px 0"}}>
+        {dados.leads.map(lead => <article id={"oportunidade-" + lead.id} key={lead.id} style={{borderTop:"1px solid #d8dfe8",padding:"16px 0"}}>
           <h3>{lead.nome}</h3><p>{lead.categoria || "Categoria não informada"} · {lead.endereco || "Endereço não informado"}</p>
           <p>{linkSeguro(lead.site) ? <a href={linkSeguro(lead.site)!} target="_blank" rel="noopener noreferrer">Site encontrado</a> : "Site não encontrado na pesquisa"} {linkSeguro(lead.maps) ? <> · <a href={linkSeguro(lead.maps)!} target="_blank" rel="noopener noreferrer">Google Maps</a></> : null}</p>
           <form action={atualizarLead}>
