@@ -46,7 +46,18 @@ E ainda:
 
 Nada de chave minha aqui dentro. A IA roda na **sua** chave (Claude, GPT, Gemini, DeepSeek, Grok ou OpenRouter), cobrada direto pelo provedor. As chaves ficam cifradas no seu banco.
 
-<p align="center"><img src="docs/telas/inicio.png" alt="Início da Central" width="900"></p>
+## Telas
+
+<p align="center"><img src="docs/telas/inicio.png" alt="Início: a ação da semana e a equipe" width="900"></p>
+
+| | |
+| --- | --- |
+| <img src="docs/telas/entrar.png" alt="Entrar"> | <img src="docs/telas/onboarding.png" alt="Onboarding: o Rastro acha a empresa no Google Maps"> |
+| **Entrar**: a equipe viva do lado. | **Onboarding**: o Rastro acha a empresa no Maps e preenche a ficha. Todo passo pula. |
+| <img src="docs/telas/decisoes.png" alt="Decisões"> | <img src="docs/telas/vendas.png" alt="Vendas"> |
+| **Decisões**: aprovar, pedir ajuste ou passar. | **Vendas**: tudo o que o Negociador Trato faz, um botão por ação. |
+| <img src="docs/telas/conta.png" alt="Conta da rede"> | <img src="docs/telas/post.png" alt="Post aberto"> |
+| **Contas das redes**: perfil, seguidores e os posts. | **Post aberto**: cada métrica contra a média da conta. |
 
 ---
 

@@ -22,6 +22,7 @@ export function ListaPedagio({ itens }: { itens: ItemPedagio[] }) {
       const novo = sim ? [...new Set([...atual, id])] : atual.filter((x) => x !== id);
       try {
         localStorage.setItem(CHAVE, JSON.stringify(novo));
+        window.dispatchEvent(new Event("central:pedagio"));
       } catch {
         /* sem armazenamento */
       }

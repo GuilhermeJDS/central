@@ -8,6 +8,7 @@ import { SimboloCx } from "@/components/central/chefe";
 import { usePendentes } from "@/components/central/contador-decisoes";
 import { Icone, type NomeIcone } from "@/components/central/icones";
 import { LogoCentral } from "@/components/central/logo";
+import { Cancela, usePedagioPendente } from "@/components/central/projeto-aberto/cancela";
 import { MenuConta, type UsuarioMenu } from "@/components/central/menu-conta";
 import { TemaBotao } from "@/components/central/tema-botao";
 import type { IdChefe } from "@/lib/chefes/identidade";
@@ -43,6 +44,7 @@ export function BarraLateral({
   const caminho = usePathname();
   const pendentesAgora = usePendentes(pendentes);
   const [aberto, setAberto] = useState(false);
+  const pedagioPendente = usePedagioPendente();
 
   const grupos: Array<{ rotulo: string | null; itens: Item[] }> = [
     {
@@ -149,6 +151,7 @@ export function BarraLateral({
                     <Link href={it.href} className="cx-nav-item" data-chefe={typeof it.icone === "string" ? undefined : it.icone.chefe} aria-current={ativo(it.href) ? "page" : undefined}>
                       {desenho(it.icone)}
                       <span>{it.rotulo}</span>
+                      {it.href === "/central/pedagio" && pedagioPendente ? <Cancela /> : null}
                       {it.contador ? (
                         <span className="cx-contador" aria-label={`${it.contador} esperando`}>
                           {it.contador}

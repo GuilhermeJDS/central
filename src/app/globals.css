@@ -181,3 +181,18 @@ button, input, select, textarea { font: inherit; }
   border-radius: 14px !important; background: color-mix(in srgb, var(--cx-card) 82%, transparent) !important;
   box-shadow: var(--cx-sombra), inset 0 0 0 1px color-mix(in srgb, currentColor 7%, transparent) !important;
 }
+
+/* Pedágio pendente: a cancela pula de tempos em tempos (igual ao Garimpo). */
+.cx-cancela { margin-left: auto; position: relative; display: grid; place-items: center; width: 28px; height: 24px; border-radius: 999px; background: color-mix(in srgb, #e3ad35 15%, transparent); animation: cx-pulso 2.8s ease-out infinite; }
+.cx-cancela-pula { width: 18px; height: 15px; overflow: visible; transform-origin: 50% 100%; animation: cx-cancela-pula 2.8s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+.cx-cancela-braco { transform-origin: 6px 10px; transform-box: view-box; animation: cx-cancela-braco 2.8s cubic-bezier(0.3, 0, 0.3, 1) infinite; }
+@keyframes cx-cancela-pula {
+  0%, 62%, 100% { transform: translateY(0) scale(1, 1); }
+  66% { transform: translateY(0) scale(1.08, 0.9); }
+  74% { transform: translateY(-5px) scale(0.95, 1.06); }
+  82% { transform: translateY(0) scale(1.04, 0.96); }
+  88% { transform: translateY(-1.5px) scale(1, 1); }
+}
+@keyframes cx-cancela-braco { 0%, 64%, 100% { transform: rotate(0deg); } 72%, 84% { transform: rotate(-38deg); } }
+@keyframes cx-pulso { 0%, 60% { box-shadow: 0 0 0 0 rgba(227, 173, 53, 0.55); } 90%, 100% { box-shadow: 0 0 0 7px rgba(227, 173, 53, 0); } }
+@media (prefers-reduced-motion: reduce) { .cx-cancela, .cx-cancela-pula, .cx-cancela-braco { animation: none; } }
