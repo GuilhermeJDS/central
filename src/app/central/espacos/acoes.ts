@@ -127,13 +127,12 @@ export async function prepararPrevia(form: FormData) {
   const { accountId } = await contaCentralGeracao();
   const id = String(form.get("id") ?? "");
   const lead = await lerLead(accountId, id);
-  const contexto = await ler(accountId, "sites");
   const ex = await criarExecucao({accountId, departamento:"VENDAS", chefe:"Negociador Trato", tipo:"CHEFE", entrada:{acao:"previaClinica", leadId:id}});
   try {
     await marcarRodando(accountId, ex.id);
     const r = await chamarModelo(accountId,
-      'Crie um rascunho de texto para uma página de apresentação em português. Use apenas dados fornecidos; nunca invente nome de profissional, endereço, serviços, preços, depoimentos, registros, especialidades, resultados ou credenciais. A lista servicos pode ficar vazia se não houver confirmação. Não inclua números ou promessas não informados. Use titulo de até 140 caracteres, apresentacao de até 600 caracteres, até 6 servicos de até 100 caracteres e chamada de até 150 caracteres. Responda somente JSON com titulo, apresentacao, servicos (array de textos curtos) e chamada.',
-      `Contexto do serviço: ${contexto || "Criação de sites para clínicas."}\nDados públicos e observações ainda sujeitos a confirmação: ${JSON.stringify({nome:lead.nome,categoria:lead.categoria,endereco:lead.endereco,evidencia:lead.evidencia})}`,
+      'Escreva o rascunho da página DA CLÍNICA para os pacientes DELA, em português. Você não está vendendo sites nem descrevendo prospecção. Não mencione Guilherme, criação de sites, prévia, pesquisa, análise, evidências, identificação de proprietário ou contato direto. Use apenas dados públicos fornecidos; nunca invente nome de profissional, endereço, serviços, preços, depoimentos, registros, especialidades, resultados ou credenciais. A lista servicos pode ficar vazia se não houver confirmação. Não inclua números ou promessas não informados. Use titulo de até 140 caracteres, apresentacao de até 600 caracteres, até 6 servicos de até 100 caracteres e chamada de até 150 caracteres. Responda somente JSON com titulo, apresentacao, servicos (array de textos curtos) e chamada.',
+      `Informações disponíveis da clínica (não representam os serviços oferecidos): ${JSON.stringify({nome:lead.nome,categoria:lead.categoria,endereco:lead.endereco})}\nNão foram fornecidos serviços específicos. Retorne servicos como lista vazia. Evite afirmar outras informações.`,
       {maxTokens: 4000, timeoutMs: 90000, chefe:"Trato"});
     const rascunhoSite = SITE_SCHEMA.parse(extrairJson(r.texto));
     const atual = await lerLead(accountId, id);
