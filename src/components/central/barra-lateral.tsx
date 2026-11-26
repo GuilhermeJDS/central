@@ -85,6 +85,7 @@ export function BarraLateral({
       rotulo: null,
       itens: [
         { href: "/central", rotulo: "Início", icone: "inicio" },
+        { href: "/central/espacos", rotulo: "Meus projetos", icone: "ficha" },
         { href: "/central/decisoes", rotulo: "Decisões", icone: "decisoes", contador: pendentesAgora },
         { href: "/central/linha", rotulo: "Linha do tempo", icone: "linha" },
       ],
