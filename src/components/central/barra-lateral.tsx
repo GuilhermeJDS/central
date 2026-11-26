@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { ChevronLeft } from "lucide-react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { SimboloCx } from "@/components/central/chefe";
 import { usePendentes } from "@/components/central/contador-decisoes";
@@ -45,6 +46,39 @@ export function BarraLateral({
   const pendentesAgora = usePendentes(pendentes);
   const [aberto, setAberto] = useState(false);
   const pedagioPendente = usePedagioPendente();
+  const [recolhida, setRecolhida] = useState(false);
+
+  // Recolhida ou não fica guardado neste navegador; ⌘B / Ctrl+B alterna.
+  useEffect(() => {
+    try {
+      setRecolhida(localStorage.getItem("central:menu") === "recolhido");
+    } catch {
+      /* sem armazenamento */
+    }
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.menu = recolhida ? "recolhido" : "aberto";
+  }, [recolhida]);
+  const alternar = useCallback(() => {
+    setRecolhida((r) => {
+      try {
+        localStorage.setItem("central:menu", r ? "aberto" : "recolhido");
+      } catch {
+        /* sem armazenamento */
+      }
+      return !r;
+    });
+  }, []);
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        alternar();
+      }
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [alternar]);
 
   const grupos: Array<{ rotulo: string | null; itens: Item[] }> = [
     {
@@ -96,7 +130,16 @@ export function BarraLateral({
     );
 
   return (
-    <aside className="cx-lateral" data-aberto={aberto ? "true" : "false"}>
+    <aside className="cx-lateral" data-aberto={aberto ? "true" : "false"} data-recolhida={recolhida ? "true" : undefined}>
+      <button
+        type="button"
+        className="cx-puxador"
+        onClick={alternar}
+        aria-label={recolhida ? "Abrir o menu" : "Recolher o menu"}
+        title={`${recolhida ? "Abrir" : "Recolher"} o menu (⌘B)`}
+      >
+        <ChevronLeft size={14} strokeWidth={2.5} aria-hidden="true" />
+      </button>
       <div className="cx-lateral-topo">
         <Link href="/central" className="cx-logo" aria-label="Central · Início">
           <LogoCentral />
@@ -148,7 +191,7 @@ export function BarraLateral({
               <ul>
                 {g.itens.map((it) => (
                   <li key={it.href}>
-                    <Link href={it.href} className="cx-nav-item" data-chefe={typeof it.icone === "string" ? undefined : it.icone.chefe} aria-current={ativo(it.href) ? "page" : undefined}>
+                    <Link href={it.href} className="cx-nav-item" data-rotulo={it.rotulo} aria-label={recolhida ? it.rotulo : undefined} data-chefe={typeof it.icone === "string" ? undefined : it.icone.chefe} aria-current={ativo(it.href) ? "page" : undefined}>
                       {desenho(it.icone)}
                       <span>{it.rotulo}</span>
                       {it.href === "/central/pedagio" && pedagioPendente ? <Cancela /> : null}

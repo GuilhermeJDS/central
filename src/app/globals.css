@@ -196,3 +196,51 @@ button, input, select, textarea { font: inherit; }
 @keyframes cx-cancela-braco { 0%, 64%, 100% { transform: rotate(0deg); } 72%, 84% { transform: rotate(-38deg); } }
 @keyframes cx-pulso { 0%, 60% { box-shadow: 0 0 0 0 rgba(227, 173, 53, 0.55); } 90%, 100% { box-shadow: 0 0 0 7px rgba(227, 173, 53, 0); } }
 @media (prefers-reduced-motion: reduce) { .cx-cancela, .cx-cancela-pula, .cx-cancela-braco { animation: none; } }
+
+/* ---------- Sidebar recolhível (⌘B), como no Garimpo. Só no computador. */
+.cx { transition: grid-template-columns 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.cx-lateral { overflow-x: visible; z-index: 30; }
+.cx-puxador {
+  position: fixed; top: 50vh; left: calc(252px - 13px); z-index: 40;
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--cx-tinta) 16%, transparent); background: var(--cx-card); color: var(--cx-tinta-2);
+  box-shadow: var(--cx-sombra-alta); transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, left 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cx-puxador svg { transition: transform 300ms ease; }
+@media (hover: hover) { .cx-puxador:hover { transform: scale(1.1); background: var(--cx-tinta); color: var(--cx-card); } }
+
+@media (min-width: 900px) {
+  html[data-menu="recolhido"] .cx { grid-template-columns: 76px minmax(0, 1fr); }
+  .cx-lateral[data-recolhida] { padding-inline: 10px; overflow: visible; }
+  .cx-lateral[data-recolhida] .cx-puxador { left: calc(76px - 13px); }
+  .cx-lateral[data-recolhida] .cx-puxador svg { transform: rotate(180deg); }
+  /* Some o texto; ficam os ícones centralizados. */
+  .cx-lateral[data-recolhida] .cx-logo-central-nome,
+  .cx-lateral[data-recolhida] .cx-logo-sub,
+  .cx-lateral[data-recolhida] .cx-negocio,
+  .cx-lateral[data-recolhida] .cx-nav-item > span:not(.cx-nav-icone):not(.cx-nav-chefe):not(.cx-cancela):not(.cx-contador),
+  .cx-lateral[data-recolhida] .cx-pilula-exemplo,
+  .cx-lateral[data-recolhida] .cx-tema-botao,
+  .cx-lateral[data-recolhida] .cx-conta-botao > :not(.cx-avatar) { display: none !important; }
+  .cx-lateral[data-recolhida] .cx-lateral-topo { justify-content: center; }
+  .cx-lateral[data-recolhida] .cx-logo { padding: 0; align-items: center !important; }
+  .cx-lateral[data-recolhida] .cx-nav-rotulo { font-size: 0 !important; padding: 0 !important; justify-content: center; margin: 2px 0 6px; }
+  .cx-lateral[data-recolhida] .cx-nav-rotulo::after { flex: 0 0 24px; }
+  .cx-lateral[data-recolhida] .cx-nav-item { justify-content: center; padding: 0 !important; }
+  .cx-lateral[data-recolhida] .cx-nav-item[aria-current="page"]::before { left: -10px; }
+  /* Contador vira bolinha no canto do ícone; a cancela vira um ponto pulsando. */
+  .cx-lateral[data-recolhida] .cx-contador { position: absolute; top: 3px; right: 6px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 10px; }
+  .cx-lateral[data-recolhida] .cx-cancela { position: absolute; top: 4px; right: 6px; width: 9px; height: 9px; margin: 0; background: #e3ad35; }
+  .cx-lateral[data-recolhida] .cx-cancela svg { display: none; }
+  .cx-lateral[data-recolhida] .cx-conta-botao { justify-content: center; padding: 6px !important; }
+  /* Nome do item ao passar o mouse. */
+  .cx-lateral[data-recolhida] .cx-nav-item::after {
+    content: attr(data-rotulo); position: absolute; left: calc(100% + 14px); top: 50%; transform: translateY(-50%);
+    white-space: nowrap; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    background: var(--cx-tinta); color: var(--cx-card); box-shadow: var(--cx-sombra-alta);
+    opacity: 0; pointer-events: none; transition: opacity 120ms ease; z-index: 50; background-image: none; -webkit-mask-image: none; mask-image: none; inset: auto; inset-inline-start: calc(100% + 14px); top: 50%;
+  }
+  .cx-lateral[data-recolhida] .cx-nav-item:hover::after { opacity: 1; }
+}
+@media (max-width: 899px) { .cx-puxador { display: none; } }
+@media (prefers-reduced-motion: reduce) { .cx, .cx-puxador, .cx-puxador svg { transition: none; } }
