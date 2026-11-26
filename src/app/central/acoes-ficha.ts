@@ -140,7 +140,7 @@ export async function distribuirContextoFichaAcao(atual: Record<string, string>,
       accountId,
       SISTEMA_CONTEXTO,
       `FICHA ATUAL:\n${JSON.stringify(ficha, null, 1)}\n\nTEXTO COLADO:\n${t}`,
-      { maxTokens: 2000, timeoutMs: 90_000, chefe: "Norte" },
+      { maxTokens: 8000, timeoutMs: 90_000, chefe: "Norte" },
     );
     const bruto = respostaSchema.parse(extrairJson(r.texto));
     const proposta: Partial<Record<CampoProposta, string>> = {};
