@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BotaoAguardar } from "./botao-aguardar";
 import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia } from "./acoes";
 
@@ -72,6 +73,7 @@ export default async function Espacos() {
             <h3>{lead.rascunhoSite.titulo}</h3><p>{lead.rascunhoSite.apresentacao}</p>
             {lead.rascunhoSite.servicos.length ? <ul>{lead.rascunhoSite.servicos.map((s,i)=><li key={i}>{s}</li>)}</ul> : <p>Serviços aguardam confirmação.</p>}
             <p>{lead.rascunhoSite.chamada}</p><p>Confira os dados antes de usar esta prévia.</p>
+            <Link href={`/central/espacos/previa/${lead.id}`} className="cx-botao cx-botao--azul">Visualizar página</Link>
           </section> : null}
           {lead.mensagem ? <div><strong>Rascunho para revisão</strong><p style={{whiteSpace:"pre-wrap"}}>{lead.mensagem}</p></div> : null}
           <form action={rascunharContato}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Preparar mensagem" aguardando="Preparando mensagem…" /></form>
