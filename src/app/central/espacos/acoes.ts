@@ -1,20 +1,19 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { contaCentral, contaCentralLeitura, contaCentralGeracao } from "@/app/central/_lib/sessao";
 import { prisma } from "@/lib/prisma";
 import { buscarNegocio } from "@/lib/rastro/busca";
-import { chamarModelo } from "@/lib/chefes/chamar-modelo";
+import { chamarModelo, usoDe } from "@/lib/chefes/chamar-modelo";
+import { criarExecucao, marcarRodando, concluirExecucao, falharExecucao } from "@/lib/skills/execucoes";
 
-const ESPACOS = {
-  engenharia: "Lumina Engenharia",
-  ofertas: "Lumina Ofertas",
-  sites: "Sites para clínicas",
-} as const;
+const ESPACOS = { engenharia: "Lumina Engenharia", ofertas: "Lumina Ofertas", sites: "Sites para clínicas" } as const;
 type Espaco = keyof typeof ESPACOS;
-type Lead = { nome: string; endereco: string | null; site: string | null; telefone: string | null; maps: string | null; categoria: string | null; criado: string; mensagem?: string };
+type Lead = { id: string; nome: string; endereco: string | null; site: string | null; maps: string | null; categoria: string | null; criado: string; mensagem?: string; status?: string; responsavel?: string; contato?: string; evidencia?: string; previa?: string };
 const validar = (v: string): v is Espaco => Object.hasOwn(ESPACOS, v);
-const chave = (conta: string, parte: string) => `espacos.${conta}.${parte}`;
+const prefixo = (conta: string) => `espacos.${conta}.`;
+const chave = (conta: string, parte: string) => prefixo(conta) + parte;
 
 async function ler(conta: string, parte: string) {
   return (await prisma.config.findUnique({ where: { chave: chave(conta, parte) } }))?.valor ?? "";
@@ -23,14 +22,23 @@ async function gravar(conta: string, parte: string, valor: string) {
   const k = chave(conta, parte);
   await prisma.config.upsert({ where: { chave: k }, create: { chave: k, valor }, update: { valor } });
 }
+async function lerLead(conta: string, id: string): Promise<Lead> {
+  if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error("Registro inválido.");
+  const raw = await ler(conta, "lead." + id);
+  if (!raw) throw new Error("Registro não encontrado.");
+  const lead = JSON.parse(raw) as Lead;
+  if (lead.id !== id) throw new Error("Registro inválido.");
+  return lead;
+}
 export async function dadosEspacos() {
   const { accountId } = await contaCentralLeitura();
-  const [engenharia, ofertas, sites, bruto] = await Promise.all([
-    ler(accountId, "engenharia"), ler(accountId, "ofertas"), ler(accountId, "sites"), ler(accountId, "leads")
+  const [engenharia, ofertas, sites, respostas, registros] = await Promise.all([
+    ler(accountId, "engenharia"), ler(accountId, "ofertas"), ler(accountId, "sites"),
+    Promise.all(["engenharia","ofertas","sites"].map(e => ler(accountId, "resposta." + e))),
+    prisma.config.findMany({ where: { chave: { startsWith: chave(accountId, "lead.") } }, orderBy: { atualizadoEm: "desc" }, take: 200 }),
   ]);
-  let leads: Lead[] = [];
-  try { const parsed = JSON.parse(bruto || "[]"); if (Array.isArray(parsed)) leads = parsed; } catch { /* vazio */ }
-  return { engenharia, ofertas, sites, leads };
+  const leads = registros.flatMap(r => { try { const x = JSON.parse(r.valor) as Lead; return x.id && x.nome ? [x] : []; } catch { return []; } });
+  return { engenharia, ofertas, sites, respostas, leads };
 }
 export async function salvarContexto(form: FormData) {
   const { accountId } = await contaCentral();
@@ -40,30 +48,70 @@ export async function salvarContexto(form: FormData) {
   await gravar(accountId, espaco, texto);
   revalidatePath("/central/espacos");
 }
+export async function perguntarEspaco(form: FormData) {
+  const { accountId } = await contaCentralGeracao();
+  const espaco = String(form.get("espaco") ?? "");
+  const pedido = String(form.get("pedido") ?? "").trim();
+  if (!validar(espaco) || pedido.length < 4 || pedido.length > 4000) throw new Error("Informe um pedido válido.");
+  const contexto = await ler(accountId, espaco);
+  if (!contexto) throw new Error("Preencha o contexto desta área antes de pedir.");
+  const ex = await criarExecucao({accountId, departamento: "DIRETORIA", chefe: "Norte", tipo: "CHEFE", entrada: {acao:"perguntaEspaco", espaco, pedido}});
+  try {
+    await marcarRodando(accountId, ex.id);
+    const resposta = await chamarModelo(accountId,
+      "Você ajuda em uma frente específica do negócio do usuário. Use somente o contexto desta frente e o pedido. Não invente dados, clientes, preços ou resultados. Se faltar algo essencial, diga o que falta. Em engenharia apresente cálculos e recomendações como apoio a ser verificado pelo responsável técnico.",
+      `ÁREA: ${ESPACOS[espaco]}\nCONTEXTO:\n${contexto}\n\nPEDIDO:\n${pedido}`,
+      {maxTokens: 5000, timeoutMs: 90000, chefe:"Norte"});
+    await gravar(accountId, "resposta." + espaco, JSON.stringify({pedido, texto: resposta.texto}));
+    await concluirExecucao(accountId, ex.id, {saida: resposta.texto, titulo: ESPACOS[espaco], ...usoDe(resposta)});
+  } catch(e) {
+    await falharExecucao(accountId, ex.id, e instanceof Error ? e.message : "Erro ao gerar resposta").catch(() => {});
+    throw e;
+  }
+  revalidatePath("/central/espacos");
+}
 export async function pesquisarClinica(form: FormData) {
   const { accountId } = await contaCentral();
   const nome = String(form.get("nome") ?? "").trim();
   const cidade = String(form.get("cidade") ?? "").trim();
   if (nome.length < 2 || nome.length > 150 || cidade.length < 2 || cidade.length > 150) throw new Error("Informe nome e cidade.");
   const { lugar } = await buscarNegocio(nome, cidade);
-  if (!lugar) return;
+  if (!lugar) throw new Error("Nenhum resultado encontrado.");
   const atual = await dadosEspacos();
   if (atual.leads.some(l => l.maps && l.maps === lugar.linkMaps)) return;
-  const lead: Lead = { nome: lugar.nome, endereco: lugar.endereco, site: lugar.site, telefone: lugar.telefone, maps: lugar.linkMaps, categoria: lugar.categoria, criado: new Date().toISOString() };
-  await gravar(accountId, "leads", JSON.stringify([lead, ...atual.leads].slice(0, 200)));
+  const id = randomUUID();
+  const lead: Lead = { id, nome: lugar.nome, endereco: lugar.endereco, site: lugar.site, maps: lugar.linkMaps, categoria: lugar.categoria, criado: new Date().toISOString(), status:"pesquisado" };
+  await gravar(accountId, "lead." + id, JSON.stringify(lead));
+  revalidatePath("/central/espacos");
+}
+export async function atualizarLead(form: FormData) {
+  const { accountId } = await contaCentral();
+  const id = String(form.get("id") ?? "");
+  const lead = await lerLead(accountId, id);
+  const status = String(form.get("status") ?? "");
+  if (!["pesquisado","qualificando","previa","pronto","contatado","negociacao","fechado","descartado"].includes(status)) throw new Error("Etapa inválida.");
+  const campo = (nome: string, max: number) => String(form.get(nome) ?? "").trim().slice(0,max);
+  await gravar(accountId, "lead." + id, JSON.stringify({...lead, status, responsavel: campo("responsavel",150), contato: campo("contato",300), evidencia: campo("evidencia",2000), previa: campo("previa",500)}));
   revalidatePath("/central/espacos");
 }
 export async function rascunharContato(form: FormData) {
   const { accountId } = await contaCentralGeracao();
-  const index = Number(form.get("indice"));
-  const dados = await dadosEspacos();
-  if (!Number.isInteger(index) || index < 0 || index >= dados.leads.length) throw new Error("Registro não encontrado.");
-  const lead = dados.leads[index];
-  const resposta = await chamarModelo(accountId,
-    "Escreva em português brasileiro um rascunho breve e humano de abordagem comercial. Não invente informações, resultados, vínculos, preço ou problemas no site. Não afirme que falta site; apenas proponha conversa. O contato é um rascunho, nunca enviado automaticamente.",
-    `Contexto da frente de sites: ${dados.sites || "Criação de sites para clínicas e profissionais de saúde."}\nDados públicos do estabelecimento: ${JSON.stringify(lead)}\nNão presuma o nome do proprietário. Se não houver responsável identificado, deixe isso explícito.`,
-    { maxTokens: 2500, timeoutMs: 90000, chefe: "Trato" });
-  dados.leads[index] = { ...lead, mensagem: resposta.texto };
-  await gravar(accountId, "leads", JSON.stringify(dados.leads));
+  const id = String(form.get("id") ?? "");
+  const lead = await lerLead(accountId, id);
+  const contexto = await ler(accountId, "sites");
+  const ex = await criarExecucao({accountId, departamento:"VENDAS", chefe:"Negociador Trato", tipo:"CHEFE", entrada:{acao:"rascunhoClinica", leadId:id}});
+  try {
+    await marcarRodando(accountId, ex.id);
+    const r = await chamarModelo(accountId,
+      "Escreva em português brasileiro um rascunho breve e humano de abordagem comercial com base apenas nos dados fornecidos. Não invente informações, resultados, vínculos, preço ou problemas no site. Não afirme que falta site. Nunca apresente contato genérico como contato do proprietário. O texto será revisado e não é enviado automaticamente.",
+      `Contexto da frente de sites: ${contexto || "Criação de sites para clínicas e profissionais de saúde."}\nDados para conferência: ${JSON.stringify(lead)}\nNão presuma o nome do proprietário.`,
+      {maxTokens: 3500, timeoutMs: 90000, chefe:"Trato"});
+    const atual = await lerLead(accountId, id);
+    await gravar(accountId, "lead." + id, JSON.stringify({...atual, mensagem:r.texto}));
+    await concluirExecucao(accountId, ex.id, {saida:r.texto, titulo:"Rascunho de contato", ...usoDe(r)});
+  } catch(e) {
+    await falharExecucao(accountId, ex.id, e instanceof Error ? e.message : "Erro ao gerar rascunho").catch(() => {});
+    throw e;
+  }
   revalidatePath("/central/espacos");
 }
