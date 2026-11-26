@@ -1,3 +1,4 @@
+import { BotaoAguardar } from "./botao-aguardar";
 import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia } from "./acoes";
 
 const areas = [
@@ -31,12 +32,12 @@ export default async function Espacos() {
           <form action={salvarContexto}>
             <input type="hidden" name="espaco" value={area.id}/>
             <label>Contexto desta frente<textarea name="contexto" defaultValue={dados[area.id]} maxLength={10000} rows={6} style={campo} placeholder="Serviços, público, objetivos e preferências..."/></label>
-            <button type="submit" className="cx-botao cx-botao--azul">Salvar contexto</button>
+            <BotaoAguardar normal="Salvar contexto" aguardando="Salvando…" />
           </form>
           <form action={perguntarEspaco} style={{marginTop:18}}>
             <input type="hidden" name="espaco" value={area.id}/>
             <label>Pedir trabalho<textarea name="pedido" maxLength={4000} minLength={4} required rows={3} style={campo} placeholder="O que você precisa?"/></label>
-            <button type="submit" className="cx-botao cx-botao--azul">Pedir à IA</button>
+            <BotaoAguardar normal="Pedir à IA" aguardando="Preparando resposta…" />
           </form>
           {ultima ? <div style={{marginTop:16}}><strong>Último pedido</strong><p>{ultima.pedido}</p><strong>Resposta</strong><p style={{whiteSpace:"pre-wrap"}}>{ultima.texto}</p></div> : null}
         </section>;
@@ -48,7 +49,7 @@ export default async function Espacos() {
       <form action={pesquisarClinica} style={{display:"flex",gap:10,flexWrap:"wrap",margin:"16px 0"}}>
         <label>Nome ou busca <input name="nome" required minLength={2} maxLength={150} placeholder="Ex.: clínica de estética" style={{display:"block",padding:10}}/></label>
         <label>Cidade <input name="cidade" required minLength={2} maxLength={150} defaultValue="Vitória da Conquista" style={{display:"block",padding:10}}/></label>
-        <button className="cx-botao cx-botao--azul" type="submit">Pesquisar</button>
+        <BotaoAguardar normal="Pesquisar" aguardando="Pesquisando no Maps…" />
       </form>
       <p>Um resultado por pesquisa. Site ausente não comprova que a clínica não tenha site. Confira o responsável e seu contato antes de usá-los.</p>
       {dados.leads.length === 0 ? <p>Nenhuma pesquisa salva ainda.</p> : <div>
@@ -62,10 +63,10 @@ export default async function Espacos() {
             <label>Contato direto confirmado <input name="contato" maxLength={300} defaultValue={lead.contato || ""} style={campo}/></label>
             <label>Evidências e observações <textarea name="evidencia" maxLength={2000} defaultValue={lead.evidencia || ""} rows={3} style={campo}/></label>
             <label>Link da prévia <input name="previa" maxLength={500} defaultValue={lead.previa || ""} style={campo}/></label>
-            <button type="submit" className="cx-botao cx-botao--azul">Salvar acompanhamento</button>
+            <BotaoAguardar normal="Salvar acompanhamento" aguardando="Salvando…" />
           </form>
           {linkSeguro(lead.previa) ? <p><a href={linkSeguro(lead.previa)!} target="_blank" rel="noopener noreferrer">Abrir prévia</a></p> : null}
-          <form action={prepararPrevia} style={{marginTop:16}}><input type="hidden" name="id" value={lead.id}/><button className="cx-botao cx-botao--azul" type="submit">Criar rascunho de página</button></form>
+          <form action={prepararPrevia} style={{marginTop:16}}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Criar rascunho de página" aguardando="Preparando rascunho…" /></form>
           {lead.rascunhoSite ? <section style={{margin:"16px 0",padding:20,border:"1px solid #d8dfe8",borderRadius:12}}>
             <p>PRÉVIA DE CONTEÚDO · AINDA NÃO PUBLICADA</p>
             <h3>{lead.rascunhoSite.titulo}</h3><p>{lead.rascunhoSite.apresentacao}</p>
@@ -73,7 +74,7 @@ export default async function Espacos() {
             <p>{lead.rascunhoSite.chamada}</p><p>Confira os dados antes de usar esta prévia.</p>
           </section> : null}
           {lead.mensagem ? <div><strong>Rascunho para revisão</strong><p style={{whiteSpace:"pre-wrap"}}>{lead.mensagem}</p></div> : null}
-          <form action={rascunharContato}><input type="hidden" name="id" value={lead.id}/><button className="cx-botao cx-botao--azul" type="submit">Preparar mensagem</button></form>
+          <form action={rascunharContato}><input type="hidden" name="id" value={lead.id}/><BotaoAguardar normal="Preparar mensagem" aguardando="Preparando mensagem…" /></form>
         </article>)}
       </div>}
     </section>
