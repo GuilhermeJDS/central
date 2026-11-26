@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { contaCentral, contaCentralLeitura } from "@/app/central/_lib/sessao";
+import { contaCentral, contaCentralLeitura, contaCentralGeracao } from "@/app/central/_lib/sessao";
 import { prisma } from "@/lib/prisma";
 import { buscarNegocio } from "@/lib/rastro/busca";
 import { chamarModelo } from "@/lib/chefes/chamar-modelo";
 
-export const ESPACOS = {
+const ESPACOS = {
   engenharia: "Lumina Engenharia",
   ofertas: "Lumina Ofertas",
   sites: "Sites para clínicas",
@@ -54,7 +54,7 @@ export async function pesquisarClinica(form: FormData) {
   revalidatePath("/central/espacos");
 }
 export async function rascunharContato(form: FormData) {
-  const { accountId } = await contaCentral();
+  const { accountId } = await contaCentralGeracao();
   const index = Number(form.get("indice"));
   const dados = await dadosEspacos();
   if (!Number.isInteger(index) || index < 0 || index >= dados.leads.length) throw new Error("Registro não encontrado.");
