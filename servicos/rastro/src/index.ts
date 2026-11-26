@@ -121,7 +121,7 @@ async function handle(req: http.IncomingMessage, res: http.ServerResponse) {
   if (req.method === "POST" && url.pathname === "/buscar") {
     const { nome, cidade } = parse(buscarSchema, await readJson(req));
     takeRateSlot();
-    const leads = await enqueue(isCancelled => runSearch(nome, cidade, Math.min(5, MAX_RESULTS), isCancelled));
+    const leads = await enqueue(isCancelled => runSearch(nome, cidade, 1, isCancelled));
     return send(res, 200, { lugares: leads.slice(0, 5).map(toLugar) });
   }
 
