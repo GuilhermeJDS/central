@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CopiarTexto } from "@/components/central/copiar";
 import { enderecoPublico } from "@/lib/config";
 import { BotaoAguardar } from "./botao-aguardar";
-import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia } from "./acoes";
+import { dadosEspacos, salvarContexto, pesquisarClinica, rascunharContato, atualizarLead, perguntarEspaco, prepararPrevia, criarLinkPrevia, revogarLinkPrevia, registrarOportunidade } from "./acoes";
 
 const areas = [
   { id:"engenharia", titulo:"Lumina Engenharia", texto:"Projetos e serviços de engenharia." },
@@ -55,6 +55,21 @@ export default async function Espacos() {
         <BotaoAguardar normal="Pesquisar" aguardando="Pesquisando no Maps…" />
       </form>
       <p>Um resultado por pesquisa. Site ausente não comprova que a clínica não tenha site. Confira o responsável e seu contato antes de usá-los.</p>
+      <details style={{margin:"20px 0",padding:16,border:"1px solid #d8dfe8",borderRadius:12}}>
+        <summary>Registrar oportunidade pesquisada</summary>
+        <p>Inclua fontes para que as informações possam ser conferidas. Um contato da clínica não confirma a identidade do responsável.</p>
+        <form action={registrarOportunidade}>
+          <label>Profissional ou clínica <input name="nome" required minLength={2} maxLength={150} style={campo}/></label>
+          <label>Cidade <input name="cidade" required defaultValue="Vitória da Conquista" maxLength={150} style={campo}/></label>
+          <label>Categoria <input name="categoria" maxLength={100} style={campo}/></label>
+          <label>Site encontrado <input type="url" name="site" maxLength={500} style={campo}/></label>
+          <label>Google Maps <input type="url" name="maps" maxLength={1000} style={campo}/></label>
+          <label>Responsável confirmado <input name="responsavel" maxLength={150} style={campo}/></label>
+          <label>Contato profissional direto confirmado <input name="contato" maxLength={300} style={campo}/></label>
+          <label>Fontes e observações <textarea name="evidencia" required minLength={10} maxLength={2000} rows={4} style={campo}/></label>
+          <BotaoAguardar normal="Salvar oportunidade" aguardando="Salvando…" />
+        </form>
+      </details>
       {dados.leads.length === 0 ? <p>Nenhuma pesquisa salva ainda.</p> : <div>
         {dados.leads.map(lead => <article key={lead.id} style={{borderTop:"1px solid #d8dfe8",padding:"16px 0"}}>
           <h3>{lead.nome}</h3><p>{lead.categoria || "Categoria não informada"} · {lead.endereco || "Endereço não informado"}</p>
